@@ -1,5 +1,37 @@
 <!DOCTYPE html>
 <html>
+    <style>
+
+        header {
+          width:300px;
+          float:left;
+          background: cyan;
+          height: 20px;
+          text-indent: 0cm;
+        }
+        
+        .first-box {
+          width:300px;
+          float:left;
+          background: cyan;
+          height: 200px;
+          margin: 10px
+        }
+        
+        .first-box p {
+          color: #ffffff;
+          padding-left: 80px;
+          padding-top: 50px;
+        }
+        
+        
+        </style>
+
+
+<p> </p>
+
+
+
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 #version 300 es
@@ -8,14 +40,18 @@ in  vec4 aPosition;
 in  vec4 aColor;
 out vec4 vColor;
 
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+
 void main()
 {
+    gl_Position = uProjectionMatrix*uModelViewMatrix*aPosition;
     vColor = aColor;
-    gl_Position = aPosition;
 }
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">
+
 #version 300 es
 
 precision mediump float;
@@ -27,17 +63,65 @@ void
 main()
 {
     fColor = vColor;
-
 }
 </script>
+
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MVnew.js"></script>
 <script type="text/javascript" src="Homework1.js"></script>
 
 <body>
-<canvas id="gl-canvas" width="1024" height="1024">
+<canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+
+
+
+<div class="container">
+    <div class="first-box">
+    <div>
+    zNear .01<input id="zNearSlider" type="range"
+     min=".01" max="3" step="0.1" value="0.3" />
+     3
+    </div>
+    
+    <div>
+    zFar 3<input id="zFarSlider" type="range"
+     min="3" max="10" step="3.0" value="3" />
+     10
+    </div>
+    <div>
+    x -5<input id="xSlider" type="range"
+     min="-5" max="5" step="0.1" value="0" />
+     5
+    </div>
+    <div>
+    y -5<input id="ySlider" type="range"
+     min="-5" max="5" step="0.1" value="0" />
+     5
+    </div>
+    <div>
+    z 0<input id="zSlider" type="range"
+     min="0" max="10" step="0.1" value="4" />
+     10
+    </div>
+    <div>
+    fov 10<input id="fovSlider" type="range"
+     min="10" max="120" step="5" value="45" />
+     120
+    </div>
+    <div>
+    aspect 0.5<input id="aspectSlider" type="range"
+     min="0.5" max="2" step="0.1" value="1" />
+     2
+    </div>
+    
+    <div>
+        Click to reset all values
+        <input type="button" value="RESET" onclick="resetButton()">
+        </div>
+    </div>
+    
 </body>
 </html>

@@ -1,3 +1,5 @@
+var perspectiveExample2 = function() {
+
 "use strict";
 
 var canvas;
@@ -5,34 +7,8 @@ var gl;
 
 var numPositions = 36;
 
-var numChecks = 8;
-
-var program;
-
-var c;
-
-var flag = true;
-
 var positionsArray = [];
 var colorsArray = [];
-
-
-var near = 0.3;
-var far = 3.0;
-var z = 4.0;
-var x = 0.0;
-var y = 0.0;
-var dr = 5.0 * Math.PI/180.0;
-
-var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
-var  aspect = 1.0;       // Viewport aspect ratio
-
-var modelViewMatrix, projectionMatrix;
-var modelViewMatrixLoc, projectionMatrixLoc;
-var eye;
-const at = vec3(0.0, 0.0, 0.0);
-const up = vec3(0.0, 1.0, 0.0);
-
 
 var vertices = [
     vec4(-0.5, -0.5,  1.5, 1.0),
@@ -56,19 +32,38 @@ var vertexColors = [
     vec4(1.0, 1.0, 1.0, 1.0),  // white
 ];
 
+
+var near = 0.3;
+var far = 3.0;
+var z = 4.0;
+var x = 0.0;
+var y = 0.0;
+var dr = 5.0 * Math.PI/180.0;
+
+var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
+var  aspect = 1.0;       // Viewport aspect ratio
+
+var modelViewMatrix, projectionMatrix;
+var modelViewMatrixLoc, projectionMatrixLoc;
+var eye;
+const at = vec3(0.0, 0.0, 0.0);
+const up = vec3(0.0, 1.0, 0.0);
+
+
+
 function quad(a, b, c, d) {
-        positionsArray.push(vertices[a]);
-        colorsArray.push(vertexColors[a]);
-        positionsArray.push(vertices[b]);
-        colorsArray.push(vertexColors[a]);
-        positionsArray.push(vertices[c]);
-        colorsArray.push(vertexColors[a]);
-        positionsArray.push(vertices[a]);
-        colorsArray.push(vertexColors[a]);
-        positionsArray.push(vertices[c]);
-        colorsArray.push(vertexColors[a]);
-        positionsArray.push(vertices[d]);
-        colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[a]);
+     colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[b]);
+     colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[c]);
+     colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[a]);
+     colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[c]);
+     colorsArray.push(vertexColors[a]);
+     positionsArray.push(vertices[d]);
+     colorsArray.push(vertexColors[a]);
 }
 
 function colorCube()
@@ -125,25 +120,25 @@ window.onload = function init() {
 
 // sliders for viewing parameters
 
-    document.getElementById("zFarSlider").oninput = function(event) {
+    document.getElementById("zFarSlider").onchange = function(event) {
         far = event.target.value;
     };
-    document.getElementById("zNearSlider").oninput = function(event) {
+    document.getElementById("zNearSlider").onchange = function(event) {
         near = event.target.value;
     };
-    document.getElementById("xSlider").oninput = function(event) {
-        x = event.target.value;
+    document.getElementById("xSlider").onchange = function(event) {
+       x = event.target.value;
     };
-    document.getElementById("ySlider").oninput = function(event) {
+    document.getElementById("ySlider").onchange = function(event) {
         y = event.target.value;
     };
-    document.getElementById("zSlider").oninput = function(event) {
+    document.getElementById("zSlider").onchange = function(event) {
         z = event.target.value;
     };
-    document.getElementById("aspectSlider").oninput = function(event) {
+    document.getElementById("aspectSlider").onchange = function(event) {
         aspect = event.target.value;
     };
-    document.getElementById("fovSlider").oninput = function(event) {
+    document.getElementById("fovSlider").onchange = function(event) {
         fovy = event.target.value;
     };
 
@@ -154,12 +149,6 @@ window.onload = function init() {
 var render = function(){
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    //
-    gl.enable(gl.DEPTH_TEST)
-    gl.enable(gl.CULL_FACE)
-    gl.frontFace(gl.CCW)
-    gl.cullFace(gl.BACK)
 
     eye = vec3(x,y,z);
     modelViewMatrix = lookAt(eye, at, up);
@@ -172,23 +161,5 @@ var render = function(){
     requestAnimationFrame(render);
 }
 
-
-
-
-function resetButton(){
-
-    document.getElementById("zFarSlider").value=10
-    document.getElementById("zNearSlider").value=2
-
-
-    document.getElementById("xSlider").value=0
-    document.getElementById("ySlider").value=0
-    document.getElementById("zSlider").value=0
-
-    document.getElementById("fovSlider").value=40
-    document.getElementById("aspectSlider").value=1
-
-
 }
-
-
+perspectiveExample2();
