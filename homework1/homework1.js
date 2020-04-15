@@ -24,8 +24,8 @@ var x = 0.0;
 var y = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
-var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
-var  aspect = 1.0;       // Viewport aspect ratio
+var  fovy = 45.0;  
+var  aspect = 1.0;     
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
