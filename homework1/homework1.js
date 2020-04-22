@@ -15,6 +15,7 @@ var flag = true;
 
 var positionsArray = [];
 var colorsArray = [];
+var normalsArray = []
 
 var near = 0.3;
 var far = 20.0;
@@ -101,33 +102,40 @@ var vertexColors = [
 
 function tri(a, b, c) {
     positionsArray.push(vertices[a])
-    colorsArray.push(vertexColors[6])
+    colorsArray.push(vertexColors[1])
   
     positionsArray.push(vertices[b])
-    colorsArray.push(vertexColors[5])
+    colorsArray.push(vertexColors[0])
   
     positionsArray.push(vertices[c])
-    colorsArray.push(vertexColors[6])
+    colorsArray.push(vertexColors[1])
   }
 
 function quad(a, b, c, d) {
+    var t1 = subtract(vertices[b], vertices[a]);
+    var t2 = subtract(vertices[c], vertices[b]);
+    var normal = cross(t1, t2);
+    var normal = vec3(normal);
+
     positionsArray.push(vertices[a]);
-    colorsArray.push(vertexColors[3]);
+    normalsArray.push(normal);
+    colorsArray.push(vertexColors[1]);
 
     positionsArray.push(vertices[b]);
-    colorsArray.push(vertexColors[3]);
+    colorsArray.push(vertexColors[0]);
+
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[3]);
+    colorsArray.push(vertexColors[0]);
 
     positionsArray.push(vertices[a]);
-    colorsArray.push(vertexColors[4]);
+    colorsArray.push(vertexColors[1]);
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[4]);
+    colorsArray.push(vertexColors[0]);
     
     positionsArray.push(vertices[d]);
-    colorsArray.push(vertexColors[4]);
+    colorsArray.push(vertexColors[0]);
 }
 
 function colorHourGlass()
@@ -221,6 +229,15 @@ window.onload = function init() {
     var positionLoc = gl.getAttribLocation( program, "aPosition");
     gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
+
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW );
+
+    var vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer( vNormal, 3, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal );
+
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
