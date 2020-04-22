@@ -16,16 +16,16 @@ var flag = true;
 var positionsArray = [];
 var colorsArray = [];
 
-
 var near = 0.3;
-var far = 3.0;
+var far = 10.0;
 var z = 4.0;
 var x = 0.0;
 var y = 0.0;
 var dr = 5.0 * Math.PI/180.0;
 
 var  fovy = 45.0;  
-var  aspect = 1.0;     
+var  aspect = 2;
+
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
@@ -34,15 +34,19 @@ const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
 
+
 var vertices = [
-    vec4(-0.5, -0.5,  1.5, 1.0),
+    vec4(-0.3, -0.3,  1.2, 1.0),
     vec4(-0.5,  0.5,  1.5, 1.0),
-    vec4(0.5,  0.5,  1.5, 1.0),
+    vec4(2*Math.sqrt(2),  0.5,  1.5, 1.0),
     vec4(0.5, -0.5,  1.5, 1.0),
     vec4(-0.5, -0.5, 0.5, 1.0),
     vec4(-0.5,  0.5, 0.5, 1.0),
     vec4(0.5,  0.5, 0.5, 1.0),
     vec4( 0.5, -0.5, 0.5, 1.0)
+
+
+
 ];
 
 var vertexColors = [
@@ -188,7 +192,17 @@ function resetButton(){
     document.getElementById("fovSlider").value=40
     document.getElementById("aspectSlider").value=1
 
+    far = 0.3
+    near = 10.0
+    x = 0.0
+    y = 0.0
+    z = 4.0
+    ascpect = 2
+    fovy = 45.0
+    
+    
 
+    
 }
 
 
