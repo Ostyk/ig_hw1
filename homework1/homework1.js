@@ -3,7 +3,7 @@
 var canvas;
 var gl;
 
-var numVertices = 192;
+var numVertices = 48;
 
 var numChecks = 8;
 
@@ -17,11 +17,11 @@ var positionsArray = [];
 var colorsArray = [];
 
 var near = 0.3;
-var far = 10.0;
+var far = 20.0;
 var z = 4.0;
-var x = 0.0;
+var x = -4.0;
 var y = 0.0;
-var dr = 5.0 * Math.PI/180.0;
+var dr = 2.0 * Math.PI/180.0;
 
 var  fovy = 45.0;  
 var  aspect = 2;
@@ -38,49 +38,50 @@ const up = vec3(0.0, 1.0, 0.0);
 var vertices = [
 
 
+
 // bottommost octagon
-vec4(0.6, 0.0, -2.0, 1.0), // point 0
-vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -2.0, 1.0), // point 1
-vec4(0.0, 0.6, -2.0, 1.0), // point 2
-vec4(-0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -2.0, 1.0), // point 3
-vec4(-0.6, 0.0, -2.0, 1.0), // point 4
-vec4(-0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -2.0, 1.0), // point 5
-vec4(0.0, -0.6, -2.0, 1.0), // point 6
-vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -2.0, 1.0), // point 7
-vec4(0, 0, -2.0, 1.0), // point (centroid) 8
+vec4(0.6, 0.0, -1.0, 1.0), // point 0
+vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -1.0, 1.0), // point 1
+vec4(0.0, 0.6, -1.0, 1.0), // point 2
+vec4(-0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -1.0, 1.0), // point 3
+vec4(-0.6, 0.0, -1.0, 1.0), // point 4
+vec4(-0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -1.0, 1.0), // point 5
+vec4(0.0, -0.6, -1.0, 1.0), // point 6
+vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -1.0, 1.0), // point 7
+vec4(0, 0, -1.0, 1.0), // point (centroid) 8
 
 // central lower  octagon
-vec4(0.15, 0.0, -0.3, 1.0), // point 9
-vec4(0.075*Math.sqrt(2), 0.075*Math.sqrt(2), -0.3, 1.0), // point 10
-vec4(0.0, 0.15, -0.3, 1.0), // point 11
-vec4(-0.075*Math.sqrt(2), 0.075*Math.sqrt(2), -0.3, 1.0), // point 12
-vec4(-0.15, 0.0, -0.3, 1.0), // point 13
-vec4(-0.075*Math.sqrt(2), -0.075*Math.sqrt(2), -0.3, 1.0), // point 14
-vec4(0.0, -0.15, -0.3, 1.0), // point 15
-vec4(0.075*Math.sqrt(2), -0.075*Math.sqrt(2), -0.3, 1.0), // point 16
-vec4(0, 0, -0.3, 1.0), // point (centroid) 17
+vec4(0.15, 0.0, -0.2, 1.0), // point 9
+vec4(0.075*Math.sqrt(2), 0.075*Math.sqrt(2), -0.2, 1.0), // point 10
+vec4(0.0, 0.15, -0.2, 1.0), // point 11
+vec4(-0.075*Math.sqrt(2), 0.075*Math.sqrt(2), -0.2, 1.0), // point 12
+vec4(-0.15, 0.0, -0.2, 1.0), // point 13
+vec4(-0.075*Math.sqrt(2), -0.075*Math.sqrt(2), -0.2, 1.0), // point 14
+vec4(0.0, -0.15, -0.2, 1.0), // point 15
+vec4(0.075*Math.sqrt(2), -0.075*Math.sqrt(2), -0.2, 1.0), // point 16
+vec4(0, 0, -0.2, 1.0), // point (centroid) 17
 
 // central upper octagon
-vec4(0.15, 0.0, 0.3, 1.0), // point 18
-vec4(0.075*Math.sqrt(2), 0.075*Math.sqrt(2), 0.3, 1.0), // point 19
-vec4(0.0, 0.15, 0.3, 1.0), // point 20
-vec4(-0.075*Math.sqrt(2), 0.075*Math.sqrt(2), 0.3, 1.0), // point 21
-vec4(-0.15, 0.0, 0.3, 1.0), // point 22
-vec4(-0.075*Math.sqrt(2), -0.075*Math.sqrt(2), 0.3, 1.0), // point 23
-vec4(0.0, -0.15, 0.3, 1.0), // point 24
-vec4(0.075*Math.sqrt(2), -0.075*Math.sqrt(2), 0.3, 1.0), // point 25
-vec4(0, 0, 0.3, 1.0), // point (centroid) 26
+vec4(0.15, 0.0, 0.2, 1.0), // point 18
+vec4(0.075*Math.sqrt(2), 0.075*Math.sqrt(2), 0.2, 1.0), // point 19
+vec4(0.0, 0.15, 0.2, 1.0), // point 20
+vec4(-0.075*Math.sqrt(2), 0.075*Math.sqrt(2), 0.2, 1.0), // point 21
+vec4(-0.15, 0.0, 0.2, 1.0), // point 22
+vec4(-0.075*Math.sqrt(2), -0.075*Math.sqrt(2), 0.2, 1.0), // point 23
+vec4(0.0, -0.15, 0.2, 1.0), // point 24
+vec4(0.075*Math.sqrt(2), -0.075*Math.sqrt(2), 0.2, 1.0), // point 25
+vec4(0, 0, 0.2, 1.0), // point (centroid) 26
 
 // topmost octagon
-vec4(0.6, 0.0, 2.0, 1.0), // point 27
-vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), 2.0, 1.0), // point 28
-vec4(0.0, 0.6, 2.0, 1.0), // point 29
-vec4(-0.3*Math.sqrt(2), 0.3*Math.sqrt(2), 2.0, 1.0), // point 30
-vec4(-0.6, 0.0, 2.0, 1.0), // point 31
-vec4(-0.3*Math.sqrt(2), -0.3*Math.sqrt(2), 2.0, 1.0), // point 32
-vec4(0.0, -0.6, 2.0, 1.0), // point 33
-vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), 2.0, 1.0), // point 34
-vec4(0, 0, 2.0, 1.0), // point (centroid) 35
+vec4(0.6, 0.0, 1.0, 1.0), // point 27
+vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), 1.0, 1.0), // point 28
+vec4(0.0, 0.6, 1.0, 1.0), // point 29
+vec4(-0.3*Math.sqrt(2), 0.3*Math.sqrt(2), 1.0, 1.0), // point 30
+vec4(-0.6, 0.0, 1.0, 1.0), // point 31
+vec4(-0.3*Math.sqrt(2), -0.3*Math.sqrt(2), 1.0, 1.0), // point 32
+vec4(0.0, -0.6, 1.0, 1.0), // point 33
+vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), 1.0, 1.0), // point 34
+vec4(0, 0, 1.0, 1.0), // point (centroid) 35
 
 
 
@@ -100,45 +101,47 @@ var vertexColors = [
 
 function tri(a, b, c) {
     positionsArray.push(vertices[a])
-    colorsArray.push(vertexColors[1])
+    colorsArray.push(vertexColors[6])
   
     positionsArray.push(vertices[b])
-    colorsArray.push(vertexColors[0])
+    colorsArray.push(vertexColors[5])
   
     positionsArray.push(vertices[c])
-    colorsArray.push(vertexColors[0])
+    colorsArray.push(vertexColors[6])
   }
 
 function quad(a, b, c, d) {
     positionsArray.push(vertices[a]);
-    colorsArray.push(vertexColors[1]);
+    colorsArray.push(vertexColors[3]);
 
     positionsArray.push(vertices[b]);
-    colorsArray.push(vertexColors[0]);
+    colorsArray.push(vertexColors[3]);
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[0]);
+    colorsArray.push(vertexColors[3]);
 
     positionsArray.push(vertices[a]);
-    colorsArray.push(vertexColors[1]);
+    colorsArray.push(vertexColors[4]);
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[0]);
+    colorsArray.push(vertexColors[4]);
     
     positionsArray.push(vertices[d]);
-    colorsArray.push(vertexColors[0]);
+    colorsArray.push(vertexColors[4]);
 }
 
 function colorHourGlass()
 {
-    tri(8, 0, 1);
-    tri(8, 1, 2);
-    tri(8, 2, 3);
-    tri(8, 3, 4);
-    tri(8, 4, 5);
-    tri(8, 5, 6);
-    tri(8, 6, 7);
-    tri(8, 7, 0);
+ 
+    tri(1,0,8);
+    tri(2, 1, 8);
+    tri(3, 2, 8);
+    tri(4, 3, 8);
+    tri(5, 4, 8);
+    tri(6, 5, 8);
+    tri(7, 6, 8);
+    tri(0, 7, 8);
+
     tri(35, 27, 28);
     tri(35, 28, 29);
     tri(35, 29, 30);
@@ -147,8 +150,7 @@ function colorHourGlass()
     tri(35, 32, 33);
     tri(35, 33, 34);
     tri(35, 34, 27);
-    tri(34, 27, 35);
-
+    
     quad(0, 1, 10, 9); 
     quad(1, 2, 11, 10); 
     quad(2, 3, 12, 11); 
@@ -157,6 +159,7 @@ function colorHourGlass()
     quad(5, 6, 15, 14); 
     quad(6, 7, 16, 15); 
     quad(7, 0, 9, 16); 
+
     quad(9, 10, 19, 18); 
     quad(10, 11, 20, 19); 
     quad(11, 12, 21, 20); 
@@ -165,6 +168,7 @@ function colorHourGlass()
     quad(14, 15, 24, 23); 
     quad(15, 16, 25, 24); 
     quad(16, 9, 18, 25); 
+
     quad(18, 19, 28, 27); 
     quad(19, 20, 29, 28); 
     quad(20, 21, 30, 29); 
@@ -194,11 +198,13 @@ window.onload = function init() {
 
     //
     //  Load shaders and initialize attribute buffers
-    //
+    // what am i supposed to look at?
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     colorHourGlass();
+    numVertices = positionsArray.length;
+    this.console.log(this.numVertices);
 
     var cBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
