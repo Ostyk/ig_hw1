@@ -6,7 +6,7 @@ var gl;
 var numVertices = 48;
 
 var numChecks = 8;
-
+var texSize = 64;
 var program;
 
 var c;
@@ -35,10 +35,20 @@ const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
 
+// texture part
+var texCoordsArray = [];
+var texCoord = [
+    vec2(0, 0),
+    vec2(0, 1),
+    vec2(1, 1),
+    vec2(1, 0)
+];
+
+var texture;
+
+
 
 var vertices = [
-
-
 
 // bottommost octagon
 vec4(0.6, 0.0, -1.0, 1.0), // point 0
@@ -84,8 +94,6 @@ vec4(0.0, -0.6, 1.0, 1.0), // point 33
 vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), 1.0, 1.0), // point 34
 vec4(0, 0, 1.0, 1.0), // point (centroid) 35
 
-
-
 ];
 
 var vertexColors = [
@@ -100,15 +108,45 @@ var vertexColors = [
 ];
 
 
+//// texture
+// function configureTexture( image ) {
+//     texture_test = gl.createTexture();
+//     gl.bindTexture( gl.TEXTURE_2D, texture_test );
+//     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+//     gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB,
+//          gl.RGB, gl.UNSIGNED_BYTE, image );
+//     gl.generateMipmap( gl.TEXTURE_2D );
+//     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+//                       gl.NEAREST_MIPMAP_LINEAR );
+//     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+
+//     gl.uniform1i(gl.getUniformLocation(program, "texture_test"), 0);
+// }
+
+function configureTexture(image) {
+    texture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
+    gl.generateMipmap(gl.TEXTURE_2D)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  
+    gl.uniform1i(gl.getUniformLocation(program, 'texture_test'), 0)
+  }
+
+
 function tri(a, b, c) {
     positionsArray.push(vertices[a])
     colorsArray.push(vertexColors[1])
-  
+    texCoordsArray.push(texCoord[0]);
+    
     positionsArray.push(vertices[b])
     colorsArray.push(vertexColors[0])
+    texCoordsArray.push(texCoord[2]);
   
     positionsArray.push(vertices[c])
     colorsArray.push(vertexColors[1])
+    texCoordsArray.push(texCoord[3]);
   }
 
 function quad(a, b, c, d) {
@@ -120,22 +158,27 @@ function quad(a, b, c, d) {
     positionsArray.push(vertices[a]);
     normalsArray.push(normal);
     colorsArray.push(vertexColors[1]);
+    texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[b]);
     colorsArray.push(vertexColors[0]);
-
+    texCoordsArray.push(texCoord[1]);
 
     positionsArray.push(vertices[c]);
     colorsArray.push(vertexColors[0]);
+    texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(vertices[a]);
     colorsArray.push(vertexColors[1]);
+    texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[c]);
     colorsArray.push(vertexColors[0]);
+    texCoordsArray.push(texCoord[2]);
     
     positionsArray.push(vertices[d]);
     colorsArray.push(vertexColors[0]);
+    texCoordsArray.push(texCoord[3]);
 }
 
 function colorHourGlass()
@@ -238,6 +281,19 @@ window.onload = function init() {
     gl.vertexAttribPointer( vNormal, 3, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vNormal );
 
+    /// trxture
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+
+    var texCoordLoc = gl.getAttribLocation( program, "vTexCoord" );
+    gl.vertexAttribPointer( texCoordLoc, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( texCoordLoc );
+
+    var image = document.getElementById("texImage");
+    configureTexture( image );
+
+    //////////////////////////////////////////
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
