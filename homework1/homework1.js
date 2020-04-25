@@ -137,15 +137,15 @@ function configureTexture(image) {
 
 function tri(a, b, c) {
     positionsArray.push(vertices[a])
-    colorsArray.push(vertexColors[1])
+    colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[0]);
     
     positionsArray.push(vertices[b])
-    colorsArray.push(vertexColors[0])
+    colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[2]);
   
     positionsArray.push(vertices[c])
-    colorsArray.push(vertexColors[1])
+    colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[3]);
   }
 
