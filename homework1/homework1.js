@@ -250,7 +250,7 @@ window.onload = function init() {
     //
     //  Load shaders and initialize attribute buffers
     // what am i supposed to look at?
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     colorHourGlass();
