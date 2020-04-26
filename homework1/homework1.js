@@ -11,25 +11,44 @@ var program;
 
 var c;
 
-var flag = true;
+var flag = false;
 
 var positionsArray = [];
 var colorsArray = [];
 var normalsArray = []
 
+var radius = 5.0;
+var theta = 0;
+var phi = 0.0;
+var scaling = 1
 var near = 0.3;
-var far = 20.0;
-var z = 4.0;
-var x = -4.0;
+var far = 10.0;
+var z = 0.0;
+var x = 0.0;
 var y = 0.0;
-var dr = 2.0 * Math.PI/180.0;
-
+var axis = x;
+var dr = 5.0 * Math.PI/180.0;
 var  fovy = 45.0;  
 var  aspect = 2;
+
+///////////////////// material + light
+var lightPosition = vec4(1.0, 1.0, 1.0, 0.0);
+var lightAmbient = vec4(0.4, 0.2, 0.4, 1.0);
+var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+
+var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+var materialDiffuse = vec4(0.0, 0.8, 0.0, 1.0);
+
+var ambientColor, diffuseColor;
+/////////
 
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
+
+var rotThetaLoc;
+var theta_rotation = vec3(90.0, 90.0, 90.0);
+
 var eye;
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
@@ -43,9 +62,7 @@ var texCoord = [
     vec2(1, 1),
     vec2(1, 0)
 ];
-
 var texture;
-
 
 
 var vertices = [
@@ -137,15 +154,15 @@ function configureTexture(image) {
 
 function tri(a, b, c) {
     positionsArray.push(vertices[a])
-    colorsArray.push(vertexColors[7])
+    //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[0]);
     
     positionsArray.push(vertices[b])
-    colorsArray.push(vertexColors[7])
+    //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[2]);
   
     positionsArray.push(vertices[c])
-    colorsArray.push(vertexColors[7])
+    //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[3]);
   }
 
@@ -157,27 +174,32 @@ function quad(a, b, c, d) {
 
     positionsArray.push(vertices[a]);
     normalsArray.push(normal);
-    colorsArray.push(vertexColors[1]);
+    //colorsArray.push(vertexColors[1]);
     texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[b]);
-    colorsArray.push(vertexColors[0]);
+    normalsArray.push(normal);
+    //colorsArray.push(vertexColors[0]);
     texCoordsArray.push(texCoord[1]);
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[0]);
+    normalsArray.push(normal);
+    //colorsArray.push(vertexColors[0]);
     texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(vertices[a]);
-    colorsArray.push(vertexColors[1]);
+    normalsArray.push(normal);
+    //colorsArray.push(vertexColors[1]);
     texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[c]);
-    colorsArray.push(vertexColors[0]);
+    normalsArray.push(normal);
+    //colorsArray.push(vertexColors[0]);
     texCoordsArray.push(texCoord[2]);
     
     positionsArray.push(vertices[d]);
-    colorsArray.push(vertexColors[0]);
+    normalsArray.push(normal);
+    //colorsArray.push(vertexColors[0]);
     texCoordsArray.push(texCoord[3]);
 }
 
@@ -257,13 +279,13 @@ window.onload = function init() {
     numVertices = positionsArray.length;
     this.console.log(this.numVertices);
 
-    var cBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
+    // var cBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
 
-    var colorLoc = gl.getAttribLocation(program, "aColor");
-    gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorLoc);
+    // var colorLoc = gl.getAttribLocation(program, "aColor");
+    // gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(colorLoc);
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -293,12 +315,24 @@ window.onload = function init() {
     var image = document.getElementById("texImage");
     configureTexture( image );
 
-    //////////////////////////////////////////
+    
 
+////////////////////////////////////////// light
+    var ambientProduct = mult(lightAmbient, materialAmbient);
+    var diffuseProduct = mult(lightDiffuse, materialDiffuse);
+
+    gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
+       ambientProduct);
+    gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
+       diffuseProduct );
+    gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
+       lightPosition );
+
+//////////////////////////////////////////
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 
-// sliders for viewing parameters
+//////////////////////////////////////////// sliders for viewing parameters
 
     document.getElementById("zFarSlider").oninput = function(event) {
         far = event.target.value;
@@ -322,6 +356,28 @@ window.onload = function init() {
         fovy = event.target.value;
     };
 
+    document.getElementById("radiusSlider").onchange = function(event) {
+        radius = event.target.value;
+     };
+     document.getElementById("thetaSlider").onchange = function(event) {
+         theta = event.target.value* Math.PI/180.0;
+     };
+     document.getElementById("phiSlider").onchange = function(event) {
+         phi = event.target.value* Math.PI/180.0;
+     };
+
+     document.getElementById('scaleSlider').oninput = function (event) {
+        scaling = event.target.value
+      }
+
+document.getElementById('scaleSlider').value = 1
+document.getElementById("ButtonX").onclick = function(){axis = 0};
+document.getElementById("ButtonY").onclick = function(){axis = 1;};
+document.getElementById("ButtonZ").onclick = function(){axis = 2;};
+document.getElementById("ButtonT").onclick = function(){flag = !flag;};
+
+// this.console.log(rotate(theta[x], vec3(1, 0, 0)))
+// this.console.log(x)
     render();
 }
 
@@ -329,20 +385,29 @@ window.onload = function init() {
 var render = function(){
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    //
     gl.enable(gl.DEPTH_TEST)
     gl.enable(gl.CULL_FACE)
     gl.frontFace(gl.CCW)
     gl.cullFace(gl.BACK)
 
-    eye = vec3(x,y,z);
+    // eye = vec3(x,y,z);
+    if(flag)  theta_rotation[axis] += 1;
+    
+    
+    eye = vec3(radius*Math.sin(theta)*Math.cos(phi),
+                radius*Math.sin(theta)*Math.sin(phi),
+                radius*Math.cos(theta));
+
+
     modelViewMatrix = lookAt(eye, at, up);
     projectionMatrix = perspective(fovy, aspect, near, far);
+    
+    modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-
+    gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
+    
     gl.drawArrays(gl.TRIANGLES, 0, numVertices);
     requestAnimationFrame(render);
 }
@@ -362,6 +427,11 @@ function resetButton(){
 
     document.getElementById("fovSlider").value=40
     document.getElementById("aspectSlider").value=1
+    document.getElementById('scaleSlider').value = 1
+
+    document.getElementById('radiusSlider').value = 5
+    document.getElementById('thetaSlider').value = 45
+    document.getElementById('phiSlider').value = 360
 
     far = 0.3
     near = 10.0
@@ -370,6 +440,11 @@ function resetButton(){
     z = 4.0
     ascpect = 2
     fovy = 45.0
+    scaling = 1
+
+    radius = 5
+    theta = 45
+    phi = 360
     
     
 
