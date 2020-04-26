@@ -32,14 +32,26 @@ var  fovy = 45.0;
 var  aspect = 2;
 
 ///////////////////// material + light
-var lightPosition = vec4(1.0, 1.0, 1.0, 0.0);
-var lightAmbient = vec4(0.4, 0.2, 0.4, 1.0);
+
+var x_light = 1.0;
+var y_light = 1.0;
+var z_light = 1.0;
+
+var lightPosition = vec4(x_light, y_light, z_light, 0.0);
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+// var lightPositionDirectional =  vec4(x_light, y_light, z_light, 0.0);
+// var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
+// var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
 
 var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
-var materialDiffuse = vec4(0.0, 0.8, 0.0, 1.0);
+var materialDiffuse = vec4(0.0, 0.7, 0.0, 1.0);
+var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialShininess = 100.0;
 
-var ambientColor, diffuseColor;
+var ambientColor, diffuseColor, specularColor;
 /////////
 
 
@@ -53,7 +65,7 @@ var eye;
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
-
+var speed = 0.5;
 // texture part
 var texCoordsArray = [];
 var texCoord = [
@@ -126,19 +138,6 @@ var vertexColors = [
 
 
 //// texture
-// function configureTexture( image ) {
-//     texture_test = gl.createTexture();
-//     gl.bindTexture( gl.TEXTURE_2D, texture_test );
-//     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-//     gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB,
-//          gl.RGB, gl.UNSIGNED_BYTE, image );
-//     gl.generateMipmap( gl.TEXTURE_2D );
-//     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-//                       gl.NEAREST_MIPMAP_LINEAR );
-//     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-
-//     gl.uniform1i(gl.getUniformLocation(program, "texture_test"), 0);
-// }
 
 function configureTexture(image) {
     texture = gl.createTexture()
@@ -265,13 +264,13 @@ window.onload = function init() {
 
     aspect =  canvas.width/canvas.height;
 
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    //gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clearColor(0.3, 0.35, 0.65, 1.0);
 
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
 
-    //
     //  Load shaders and initialize attribute buffers
-    // what am i supposed to look at?
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
@@ -320,13 +319,31 @@ window.onload = function init() {
 ////////////////////////////////////////// light
     var ambientProduct = mult(lightAmbient, materialAmbient);
     var diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    var specularProduct = mult(lightSpecular, materialSpecular);
 
     gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
-       ambientProduct);
+       ambientProduct );
     gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
        diffuseProduct );
+    gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
+       specularProduct );
     gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
        lightPosition );
+    gl.uniform1f(gl.getUniformLocation(program, "uShininess"),
+        materialShininess );
+    // directional
+
+    // var ambientProductDirectional = mult(lightAmbientDirectional, materialAmbient);
+    // var diffuseProductDirectional = mult(lightDiffuseDirectional, materialDiffuse);
+    
+    // gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProductDirectional"),
+    //    ambientProductDirectional);
+    // gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProductDirectional"),
+    //    diffuseProductDirectional );
+    // gl.uniform4fv(gl.getUniformLocation(program, "uLightPositionDirectional"),
+    //    lightPositionDirectional );
+    
+
 
 //////////////////////////////////////////
     modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
@@ -355,7 +372,6 @@ window.onload = function init() {
     document.getElementById("fovSlider").oninput = function(event) {
         fovy = event.target.value;
     };
-
     document.getElementById("radiusSlider").onchange = function(event) {
         radius = event.target.value;
      };
@@ -365,15 +381,28 @@ window.onload = function init() {
      document.getElementById("phiSlider").onchange = function(event) {
          phi = event.target.value* Math.PI/180.0;
      };
-
      document.getElementById('scaleSlider').oninput = function (event) {
         scaling = event.target.value
-      }
+    }
+    document.getElementById('xLight').oninput = function (event) {
+        x_light = event.target.value
+    }
+    document.getElementById('yLight').oninput = function (event) {
+    y_light = event.target.value
+    }
+    document.getElementById('zLight').oninput = function (event) {
+    z_light = event.target.value
+    }
+
 
 document.getElementById('scaleSlider').value = 1
 document.getElementById("ButtonX").onclick = function(){axis = 0};
 document.getElementById("ButtonY").onclick = function(){axis = 1;};
 document.getElementById("ButtonZ").onclick = function(){axis = 2;};
+
+
+document.getElementById("Button6").onclick = function(){speed += 0.5;};
+document.getElementById("Button7").onclick = function(){speed -= 0.5;};
 document.getElementById("ButtonT").onclick = function(){flag = !flag;};
 
 // this.console.log(rotate(theta[x], vec3(1, 0, 0)))
@@ -391,7 +420,7 @@ var render = function(){
     gl.cullFace(gl.BACK)
 
     // eye = vec3(x,y,z);
-    if(flag)  theta_rotation[axis] += 1;
+    if(flag)  theta_rotation[axis] += speed;
     
     
     eye = vec3(radius*Math.sin(theta)*Math.cos(phi),
@@ -401,7 +430,9 @@ var render = function(){
 
     modelViewMatrix = lookAt(eye, at, up);
     projectionMatrix = perspective(fovy, aspect, near, far);
-    
+
+
+    modelViewMatrix = mult(modelViewMatrix, translate(x, y, z))
     modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
@@ -433,6 +464,11 @@ function resetButton(){
     document.getElementById('thetaSlider').value = 45
     document.getElementById('phiSlider').value = 360
 
+    document.getElementById('xLight').value = 1.0
+    document.getElementById('yLight').value = 1.0
+    document.getElementById('zLight').value = 1.0
+    // document.getElementById('speed').value = 0.01
+
     far = 0.3
     near = 10.0
     x = 0.0
@@ -445,7 +481,12 @@ function resetButton(){
     radius = 5
     theta = 45
     phi = 360
-    
+    speed = 0.01
+
+    x_light = 0.5;
+    y_light = 0.5;
+    z_light = 0.5;
+        
     
 
     

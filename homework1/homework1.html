@@ -44,8 +44,9 @@ uniform vec3 uTheta;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 
-uniform vec4 uAmbientProduct, uDiffuseProduct;
+uniform vec4 uAmbientProduct, uDiffuseProduct, uSpecularProduct;
 uniform vec4 uLightPosition;
+uniform float uShininess;
 
 
 void main()
@@ -74,12 +75,8 @@ void main()
 
 
         vec3 pos = -(uModelViewMatrix * aPosition).xyz;
-
-        //fixed light postion
-    
         vec3 light = uLightPosition.xyz;
-        //vec3 L = normalize(light - pos);
-        vec3 L = normalize(light);
+        vec3 L = normalize(light - pos);
     
     
         vec3 E = normalize(-pos);
@@ -97,7 +94,13 @@ void main()
         float Kd = max(dot(L, N), 0.0);
         vec4  diffuse = Kd*uDiffuseProduct;
     
-
+        float Ks = pow(max(dot(N, H), 0.0), uShininess);
+        vec4  specular = Ks * uSpecularProduct;
+    
+        if( dot(L, N) < 0.0 ) {
+           specular = vec4(0.0, 0.0, 0.0, 1.0);
+        }
+    
     
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
     gl_Position.z = -gl_Position.z;
@@ -106,7 +109,7 @@ void main()
 
 
     fTexCoord = vTexCoord;
-    vColor = ambient + diffuse;
+    vColor = ambient + diffuse+specular;
     vColor.a = 1.0;
 
 }
@@ -152,8 +155,6 @@ Oops ... your browser doesn't support the HTML5 canvas element
      min=".01" max="3" step="0.1" value="0.3" />
      3
     </div>
-    
-
     <div>
       radius 0.05<input id="radiusSlider" type="range"
        min="0.05" max="10" step="0.1" value="4" />
@@ -175,15 +176,15 @@ Oops ... your browser doesn't support the HTML5 canvas element
         min="0.01" max="2" step="0.01" value ="1" />
         
         </div>
-
-
     <div>
     zFar 0<input id="zFarSlider" type="range"
      min="3" max="10" step="3.0" value="10" />
      10
     </div>
   </div>
-    <div class="container"></div>
+
+    <div class="container">
+      <div class="first-box">
     <div>
     x -5<input id="xSlider" type="range"
      min="-20" max="20" step="0.1" value="0" />
@@ -208,6 +209,10 @@ Oops ... your browser doesn't support the HTML5 canvas element
     aspect 0.5<input id="aspectSlider" type="range"
      min="0.5" max="2" step="0.1" value="2" />
      2
+     <div>
+      <button id = "Button6">Increase speed</button>
+      <button id = "Button7">Decrease speed</button>
+      </div>
     </div>
     
       <button id = "ButtonX">Rotate X</button>
@@ -216,9 +221,35 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <button id = "ButtonT">Toggle Rotation</button>
     </div>
 
+
+  </div>
+    <div class="container">
+      <div class="first-box">
+        <div>
+          Click to reset all values
+          <input type="button" value="RESET" onclick="resetButton()">
+        </div>
     <div>
-      Click to reset all values
-      <input type="button" value="RESET" onclick="resetButton()">
+      Light X Translation 
+      <input id="xLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />
+      
+      </div>
+      
+      <div>
+      Light Y Translation 
+      <input id="yLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />
+      
+      </div>
+      
+      <div>
+      Light Z Translation 
+      <input id="zLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />
+      
+      </div>
+    </div>
     </div>
     
 </body>
