@@ -39,13 +39,13 @@ var y_light = 1.0;
 var z_light = 1.0;
 
 // light desc
-var lightPosition = vec4(x_light, y_light, z_light, 0.0);
+var lightPosition = vec4(x_light, y_light, z_light, 1.0);
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); // not needed
 
 //light -- directional
-var lightPositionDirectional =  vec4(x_light, y_light, z_light, 0.0);
+var lightPositionDirectional =  vec4(x_light, y_light, z_light, 1.0);
 var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
 var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
 
@@ -341,7 +341,10 @@ window.onload = function init() {
     var image = document.getElementById("texImage");
     configureTexture( image );
 
-    
+//////////////////////////////////////////
+modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
+projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
+
 //////////////////////////////////////////
 /// light
 ////////////////////////////////////////// 
@@ -379,8 +382,8 @@ window.onload = function init() {
     // spotlight x material
     var ambientProductSpotlight  =  mult(SpotlightAmbient, materialAmbient);
     var diffuseProductSpotlight  =  mult(SpotlightDiffuse, materialDiffuse);
-    var ag = mult(ambientProduct, materialAmbient)
-
+    var ag = mult(ambientProduct, materialAmbient);
+    //this.console(ambientProductSpotlight)
     gl.uniform4fv(gl.getUniformLocation(program, 'uAmbientProductSpotlight'), flatten(ambientProductSpotlight))
     gl.uniform4fv(gl.getUniformLocation(program, 'uDiffuseProductSpotlight'), flatten(diffuseProductSpotlight))
     gl.uniform4fv(gl.getUniformLocation(program, "ag"),flatten(ag));
@@ -390,9 +393,7 @@ window.onload = function init() {
   
 
 
-//////////////////////////////////////////
-    modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
-    projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
+
 
 //////////////////////////////////////////// sliders for viewing parameters
 
@@ -442,6 +443,16 @@ window.onload = function init() {
     z_light = event.target.value
     }
 
+    document.getElementById("cutt_off").onchange =  function(event){
+        cutt_off = parseInt(event.target.value)
+  
+    }
+  
+    document.getElementById("spotAngle").onchange =  function(event){
+        spotLightAngle = parseInt(event.target.value)
+        
+    }
+
 
 document.getElementById('scaleSlider').value = 1
 document.getElementById("ButtonX").onclick = function(){axis = 0};
@@ -484,14 +495,17 @@ var render = function(){
     modelViewMatrix = mult(modelViewMatrix, translate(x, y, z))
     modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
 
+    gl.uniform1f(gl.getUniformLocation(program,"cutt_off"),cutt_off);
+    gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle);
+    gl.uniform1f(gl.getUniformLocation(program,"uConstantAttenuation"), constantAttenuation);
+    //this.console(SpotlightDirection)
+    gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection));
+
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
     gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
     
-    gl.uniform1f(gl.getUniformLocation(program,"cutt_off"),cutt_off);
-    gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle)
-    gl.uniform1f(gl.getUniformLocation(program,"constantAttenuation"), constantAttenuation);
-    gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection))
+
   
 
     gl.drawArrays(gl.TRIANGLES, 0, numVertices);

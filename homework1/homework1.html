@@ -36,7 +36,7 @@
 
 in  vec4 aPosition;
 in  vec4 aColor;
-in  vec3 vNormal;
+in  vec4 vNormal;
 in vec2 vTexCoord;
 out vec2 fTexCoord;
 out vec4 vColor;
@@ -56,7 +56,6 @@ uniform vec3 uTheta;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 
-uniform vec4 uAmbientProduct, uDiffuseProduct, uSpecularProduct;
 uniform vec4 uLightPosition;
 uniform float uShininess;
 
@@ -65,9 +64,6 @@ uniform vec4 uSpotlightDirection;
 uniform float uConstantAttenuation; 
 
 out float attenuation;
-
-
-
 
 void main()
 {   ////////////////////////////////////////////////
@@ -93,41 +89,46 @@ void main()
     ////////////////////////////////////////////////
     // LIGHT PART
     ////////////////////////////////////////////////
+    vec3 pos=-(uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
 
-        vec3 pos = -(uModelViewMatrix * aPosition).xyz;
-        vec3 light = uLightPosition.xyz;
-        vec3 L = normalize(light - pos);
+    vec3 light=uLightPosition.xyz;
+     if(uLightPosition.w == 0.0)  L = normalize(light.xyz);
+       else  L = normalize(light.xyz/uLightPosition.w - pos);
+    N = normalize((uModelViewMatrix*vNormal).xyz);
+      E = normalize( -pos );
+   
+   
+   
+       vec3 directionlight =  uLightPositionDirectional.xyz;
+   
+       if (uLightPositionDirectional.w == 0.0){
+       dir_L = normalize(directionlight);
+       }else{
+   
+           dir_L = normalize(directionlight - pos);
+       }
+       dir_E = -normalize(pos);
+   
+       
+       vec3 spotlight  = uSpotlightDirection.xyz;
+       spot_L = normalize(spotlight*vNormal.xyz);
+       
+       spot_E  = normalize(spotlight - pos);
+   
+   
+        // attentuation factor 
+       // calculate the distance to the light source 
+   
+        distance_light = sqrt(pow(L.x,2.0)+pow(L.y,2.0)+pow(L.z,2.0));
+   
+        attenuation = 1.0/(uConstantAttenuation*distance_light+ 1.0);
     
-    
-        vec3 E = normalize(-pos);
-        vec3 H = normalize(L + E);
-    
-        vec4 NN = vec4(vNormal,0);
-    
-        // Transform vertex normal into eye coordinates
-    
-        vec3 N = normalize((uModelViewMatrix*NN).xyz);
-    
-        // Compute terms in the illumination equation
-        vec4 ambient = uAmbientProduct;
-    
-        float Kd = max(dot(L, N), 0.0);
-        vec4  diffuse = Kd*uDiffuseProduct;
-    
-        float Ks = pow(max(dot(N, H), 0.0), uShininess);
-        vec4  specular = Ks * uSpecularProduct;
-    
-        if( dot(L, N) < 0.0 ) {
-           specular = vec4(0.0, 0.0, 0.0, 1.0);
-        }
-    
-    
+      
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
     gl_Position.z = -gl_Position.z;
 
     fTexCoord = vTexCoord;
-    vColor = ambient + diffuse+specular;
-    vColor.a = 1.0;
+
 
 }
 </script>
@@ -147,20 +148,100 @@ precision mediump float;
 in vec4 vColor;
 in vec2 fTexCoord;
 
+// Light
+in vec3 N, L, E;
+
+// distance 
+in float distance_light;
+
+// attenuation 
+in float attenuation;
+
+// Directional
+in vec3 dir_N,dir_L,dir_E;
+
+// Spotlight
+in vec3 spot_N,spot_L,spot_E;
+
+// light 
+uniform vec4 uAmbientProduct, uDiffuseProduct,  uSpecularProduct;
+
+// directional light
+uniform vec4 uAmbientProductDirectional, uDiffuseProductDirectional;
+
+// spotlight
+uniform vec4 uAmbientProductSpotlight, uDiffuseProductSpotlight;
+uniform vec4 uMaterialDiffuse;
+uniform vec4 uMaterialAmbient;
+
+// direction for spot light 
+uniform float shininess;
+uniform float cutt_off;
+uniform float spotLightAngle;
+
+// shader
+uniform vec4 ag;
+
 out vec4 fColor;
 uniform sampler2D texture_test;
 uniform float texturetoggle;
 
+
+
+float spotLightCalculation(){
+  float spot_factor ;
+ float spot_cosine =  dot(spot_E , -L);
+  if (spot_cosine > cos(radians(spotLightAngle))){
+      // assigning value to spot factor 
+      spot_factor = pow(spot_cosine,cutt_off);
+      spot_factor = spot_factor * (1.0 - (1.0-spot_cosine)*attenuation*1.0);
+  }else{
+      // point outside cone of light  
+          spot_factor = 0.0; // light will be no color 
+      }
+  return spot_factor;
+    }
 void
 main()
 {
    // fColor = vColor;
+   // step first is to calculate the c_i and c_s 
+   // c_i = a(g) * am +a(l) * am + d(l) * dm
+
+   // where am  is nothing but ambient , dm is diffuse coffecient of material 
+   vec4 ambient_  =  uAmbientProduct;
+   vec4 diffuse_  = uDiffuseProduct;
+
+   vec4 direction_ambient = uAmbientProduct;
+   vec4 direction_diffuse = uDiffuseProductDirectional;
+
+   // finding the spot factor 
+  
+   float spot_factor = spotLightCalculation();
+
+
+   // checking 
+   vec4 ci_color;
+   if (max(dot(L,N),0.0)>=0.5){
+       ci_color = (ag*uMaterialAmbient + ambient_*uMaterialAmbient + diffuse_*uMaterialDiffuse) ;
+   }else{
+       ci_color = (ag*uMaterialAmbient + ambient_*uMaterialAmbient)*spot_factor;
+   }
+
+
+   vec4 cs_color;
+
+   if (max(dot(dir_L,N),0.0)>=0.5){
+       cs_color = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient + direction_diffuse*uMaterialDiffuse);
+   }else{
+       cs_color  = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient)*spot_factor;
+   }
     
     
     if(texturetoggle == 0.0){
-      fColor = vColor ;
+      fColor = cs_color+ci_color; // vColor ;
       }else{
-          fColor = vColor * texture( texture_test, fTexCoord );
+          fColor = (cs_color+ci_color) * texture( texture_test, fTexCoord );
       }
       fColor.a = 1.0;
   
@@ -258,43 +339,56 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <button id = "ButtonY">Rotate Y</button>
       <button id = "ButtonZ">Rotate Z</button>
       <button id = "ButtonT">Toggle Rotation</button>
+      
     </div>
-
-
   </div>
-    <div class="container">
-      <div class="first-box">
-        <div>
-          Click to reset all values
-          <input type="button" value="RESET" onclick="resetButton()">
-        </div>
-    <div>
+
+  <div class="container">
+    <div class="first-box">
+      
+      <div>
+      Click to reset all values
+      <input type="button" value="RESET" onclick="resetButton()">
+      </div>
+
+      <div>
       Light X Translation 
       0<input id="xLight" type="range"
       min="0" max="1" step="0.1" value ="1.0" />1
-      
       </div>
-      
+
       <div>
       Light Y Translation 
       0<input id="yLight" type="range"
       min="0" max="1" step="0.1" value ="1.0" />1
-      
       </div>
       
       <div>
       Light Z Translation 
       0<input id="zLight" type="range"
       min="0" max="1" step="0.1" value ="1.0" />1
-      
-    </div>
-    <button id="texture_switch" >Toggle Texture</button>
-
-    </div>
       </div>
 
-    </div>
+ 
+    <div>
+    <button id="texture_switch" >Toggle Texture</button>
     </div>
     
+    <div>
+      cutt off
+      0<input id="cutt_off" type="range"
+      min="0" max="80" step="10" value ="10.0" />80
+    </div>
+
+    <div>
+      spotAngle
+      0<input id="spotAngle" type="range"
+      min="10" max="80" step="0.1" value ="10.0" />80
+    </div>
+  </div>
+    
+ 
+
 </body>
 </html>
+
