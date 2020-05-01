@@ -18,7 +18,7 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = -3.5;
+var theta = 0.0;
 var phi = 0.0;
 var scaling = 1
 var near = 77.25;
@@ -34,7 +34,7 @@ var  aspect = 2;
 ///////////////////// material + light
 
 // light settings
-var x_light = 0.2;
+var x_light = -1.2;
 var y_light = -0.6;
 var z_light = 10.2;
 
