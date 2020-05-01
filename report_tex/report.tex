@@ -1,0 +1,204 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amsmath}
+\usepackage[all]{xy}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{color}
+\newcommand{\angstrom}{\textup{\AA}}
+\color{black}
+\usepackage{geometry}
+\usepackage[autostyle]{csquotes}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\def\UrlBreaks{\do\/\do-}
+\usepackage{dcolumn}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,arrows}
+\newcolumntype{M}[1]{D{.}{.}{1.#1}}
+\usepackage{upquote} % Upright quotes for verbatim code
+\usepackage{fancyvrb} % verbatim replacement that allows latex
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+%Define the listing package
+\usepackage{listings} %code highlighter
+\usepackage{color} %use color
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+ \usepackage{tikz} % Required for flow chart
+\usetikzlibrary{shapes,arrows} % Tikz libraries required for the flow chart in the template
+
+%Customize a bit the look
+\lstset{ %
+backgroundcolor=\color{white}, % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+basicstyle=\footnotesize, % the size of the fonts that are used for the code
+breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
+breaklines=true, % sets automatic line breaking
+captionpos=b, % sets the caption-position to bottom
+commentstyle=\color{mygreen}, % comment style
+deletekeywords={...}, % if you want to delete keywords from the given language
+escapeinside={\%*}{*)}, % if you want to add LaTeX within your code
+extendedchars=true, % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+frame=single, % adds a frame around the code
+keepspaces=true, % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+keywordstyle=\color{blue}, % keyword style
+% language=Octave, % the language of the code
+morekeywords={*,...}, % if you want to add more keywords to the set
+numbers=left, % where to put the line-numbers; possible values are (none, left, right)
+numbersep=5pt, % how far the line-numbers are from the code
+numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+rulecolor=\color{black}, % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+showspaces=false, % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+showstringspaces=false, % underline spaces within strings only
+showtabs=false, % show tabs within strings adding particular underscores
+stepnumber=1, % the step between two line-numbers. If it's 1, each line will be numbered
+stringstyle=\color{mymauve}, % string literal style
+tabsize=2, % sets default tabsize to 2 spaces
+title=\lstname % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+%END of listing package%
+ 
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+ 
+%define Javascript language
+\lstdefinelanguage{JavaScript}{
+keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+keywordstyle=\color{blue}\bfseries,
+ndkeywords={class, export, boolean, throw, implements, import, this},
+ndkeywordstyle=\color{darkgray}\bfseries,
+identifierstyle=\color{black},
+sensitive=false,
+comment=[l]{//},
+morecomment=[s]{/*}{*/},
+commentstyle=\color{purple}\ttfamily,
+stringstyle=\color{red}\ttfamily,
+morestring=[b]',
+morestring=[b]"
+}
+ 
+\lstset{
+language=JavaScript,
+extendedchars=true,
+basicstyle=\footnotesize\ttfamily,
+showstringspaces=false,
+showspaces=false,
+numbers=left,
+numberstyle=\footnotesize,
+numbersep=9pt,
+tabsize=2,
+breaklines=true,
+showtabs=false,
+captionpos=b
+}
+
+
+\geometry{
+	a4paper,
+ 	left=15mm,
+ 	right=15mm,
+ 	top=15mm,
+ 	bottom=15mm
+}
+
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+
+
+
+\begin{document}
+\title{Interactive Graphics Homework 1}
+\author{Michal Ostyk-Narbutt (1854051)\\ Prof. Marco Schaerf }
+
+\maketitle
+
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{img/sapienza_logo.jpg}
+\end{center}
+\maketitle
+\tableofcontents
+\clearpage
+\section{Introduction}
+
+
+This is a documentation report describing the techniques used in the First Homework for the Interactive Graphics course. Given a baseline file of a cube, the task was to modify it by
+\begin{itemize}
+\item  expanding the number of vertices (20-30) with each having a normal and texture coordinates.
+\item adding a viewer position and a a perspective projection
+\item computing the ModelView and Projection matrices in the Javascript application
+\item adding two lights sources
+\begin{enumerate}
+\item Directional
+\item Spotlight
+\end{enumerate}
+\item assigning to the object a material with the relevant properties
+\item  Implementing a per-fragment shading model
+\item adding a texture loaded from file, with the pixel color a combination of the color
+computed using the lighting model and the texture.
+\end{itemize}
+
+
+
+\section{Documentation}
+\subsection{Creating an irregular object}
+My idea was to create some octagon Hourglass as seen in Figure \ref{img:hourglass}/. In order to accomplish that task I decied to create out of a series of triangles and quadrilaterals. However, unlike in  Figure \ref{img:hourglass}, mine would have a more visible inner part.  
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.4\columnwidth, angle = 0]{img/hourglass.png}
+\end{center}
+\caption{Octagon Hourglass \cite{hourglass}}
+\label{img:hourglass}
+\end{figure}
+I modeled the vertices based 4 faces of different widths, with the top and bottom sharing one value for the width, and the inner "neck" of the hour composed of two octagons also sharing one value. To accomplish this task I decided to run the following python code which allowed me obtain various initial sizes.
+
+\begin{lstlisting}[caption={Getting values for the vertices},label={lst:python},language=python]
+def getshapevalues(height_value, vertices=8, width=1):
+    coords = []
+    for ind, value  in enumerate(range(vertices), start=1):
+        x = cos(2*value*pi/vertices) * width
+        y = sin(2*value*pi/vertices) * width
+        coords.append([x, y])
+       return coords
+\end{lstlisting}
+The  code snippet in Listing \ref{lst:python} in Python is just a visual version of obtaining a polygon coordinates. These in reality would be checked for value and using strings formatted into JavaScript ready code. The result is show in Listing \ref{lst:bottomoctagon} below.
+
+\begin{lstlisting}[caption={Bottom Octagon example vertex defintions},label={lst:bottomoctagon},language=JavaScript]
+vec4(0.6, 0.0, -1.0, 1.0), // point 0
+vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -1.0, 1.0), // point 1
+vec4(0.0, 0.6, -1.0, 1.0), // point 2
+vec4(-0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -1.0, 1.0), // point 3
+vec4(-0.6, 0.0, -1.0, 1.0), // point 4
+vec4(-0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -1.0, 1.0), // point 5
+vec4(0.0, -0.6, -1.0, 1.0), // point 6
+vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -1.0, 1.0), // point 7
+vec4(0, 0, -1.0, 1.0), // point (centroid) 8
+\end{lstlisting}
+
+
+\section{Conclusions}
+\subsection{Advantages}
+%\begin{lstlisting}[language=JavaScript]
+%
+%\end{lstlisting}
+\subsection{Disadvantages}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{hourglass}   \url{http://evershinegift.com/Index.asp?Product420/742.html}
+
+\end{thebibliography}
+\end{document}

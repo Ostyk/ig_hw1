@@ -1,0 +1,7 @@
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Documentation}{2}
+\contentsline {subsection}{\numberline {2.1}Creating an irregular object}{2}
+\contentsline {section}{\numberline {3}Conclusions}{3}
+\contentsline {subsection}{\numberline {3.1}Advantages}{3}
+\contentsline {subsection}{\numberline {3.2}Disadvantages}{3}
