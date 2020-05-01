@@ -18,11 +18,11 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = 0;
+var theta = -3.5;
 var phi = 0.0;
 var scaling = 1
-var near = 0.3;
-var far = 10.0;
+var near = 77.25;
+var far = 1.0;
 var z = 0.0;
 var x = 0.0;
 var y = 0.0;
@@ -34,9 +34,9 @@ var  aspect = 2;
 ///////////////////// material + light
 
 // light settings
-var x_light = 1.0;
-var y_light = 1.0;
-var z_light = 1.0;
+var x_light = 0.2;
+var y_light = -0.6;
+var z_light = 10.2;
 
 // light desc
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
@@ -52,7 +52,7 @@ var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
 //light -- spotlight
 var SpotlightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-var SpotlightDirection = vec4(x_light, y_light, z_light, 0.0);
+var SpotlightDirection = vec4(1.0, 0.5, 0.5, 0.0);
 
 
 // material desc
@@ -495,16 +495,15 @@ var render = function(){
     modelViewMatrix = mult(modelViewMatrix, translate(x, y, z))
     modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
 
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+    gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
+    
     gl.uniform1f(gl.getUniformLocation(program,"cutt_off"),cutt_off);
     gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle);
     gl.uniform1f(gl.getUniformLocation(program,"uConstantAttenuation"), constantAttenuation);
     //this.console(SpotlightDirection)
     gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection));
-
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
-    gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
-    
 
   
 
