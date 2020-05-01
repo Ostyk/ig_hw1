@@ -33,19 +33,24 @@ var  aspect = 2;
 
 ///////////////////// material + light
 
+// light settings
 var x_light = 1.0;
 var y_light = 1.0;
 var z_light = 1.0;
 
+//light -- directional
+var lightPositionDirectional =  vec4(x_light, y_light, z_light, 0.0);
+var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
+var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
+
+
+// light desc
 var lightPosition = vec4(x_light, y_light, z_light, 0.0);
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
-// var lightPositionDirectional =  vec4(x_light, y_light, z_light, 0.0);
-// var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
-// var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
-
+// material desc
 var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
 var materialDiffuse = vec4(0.0, 0.7, 0.0, 1.0);
 var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
@@ -75,6 +80,7 @@ var texCoord = [
     vec2(1, 0)
 ];
 var texture;
+var texturetoggle =  1.0
 
 
 var vertices = [
@@ -152,15 +158,24 @@ function configureTexture(image) {
 
 
 function tri(a, b, c) {
+    var t1 = subtract(vertices[b], vertices[a])
+    var t2 = subtract(vertices[c], vertices[b])
+    var normal = cross(t1, t2)
+    normal = vec3(normal)
+    normal = normalize(normal)
+
     positionsArray.push(vertices[a])
+    normalsArray.push(normal)
     //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[0]);
     
     positionsArray.push(vertices[b])
+    normalsArray.push(normal)
     //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[2]);
   
     positionsArray.push(vertices[c])
+    normalsArray.push(normal)
     //colorsArray.push(vertexColors[7])
     texCoordsArray.push(texCoord[3]);
   }
@@ -351,6 +366,9 @@ window.onload = function init() {
 
 //////////////////////////////////////////// sliders for viewing parameters
 
+    document.getElementById("texture_switch").onclick = function(){
+        if(texturetoggle == 1.0){ texturetoggle = 0.0 }else{texturetoggle = 1.0}
+    }
     document.getElementById("zFarSlider").oninput = function(event) {
         far = event.target.value;
     };
@@ -422,7 +440,8 @@ var render = function(){
     // eye = vec3(x,y,z);
     if(flag)  theta_rotation[axis] += speed;
     
-    
+    gl.uniform1f(gl.getUniformLocation(program, 'texturetoggle'), texturetoggle)
+
     eye = vec3(radius*Math.sin(theta)*Math.cos(phi),
                 radius*Math.sin(theta)*Math.sin(phi),
                 radius*Math.cos(theta));

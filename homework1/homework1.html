@@ -136,13 +136,21 @@ in vec2 fTexCoord;
 
 out vec4 fColor;
 uniform sampler2D texture_test;
+uniform float texturetoggle;
 
 void
 main()
 {
    // fColor = vColor;
     
-    fColor = vColor * texture( texture_test, fTexCoord );
+    
+    if(texturetoggle == 0.0){
+      fColor = vColor ;
+      }else{
+          fColor = vColor * texture( texture_test, fTexCoord );
+      }
+      fColor.a = 1.0;
+  
 }
 </script>
 
@@ -161,7 +169,9 @@ main()
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
-<img id = "texImage" src = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTkCwUqCczekkzed0caHGGwz67CTeYjEmIhZJNbfiptTW7Yz-0K&usqp=CAU" crossorigin="anonymous" hidden></img>
+<img id = "texImage" src = "https://i.imgur.com/vA23abOr.jpg" crossorigin="anonymous" hidden></img>
+
+<!-- <img id = "texImage" src = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTkCwUqCczekkzed0caHGGwz67CTeYjEmIhZJNbfiptTW7Yz-0K&usqp=CAU" crossorigin="anonymous" hidden></img> -->
 <!-- <img id = "texImage" src = "SA2011_black.gif" hidden></img> -->
 
 <div class="container">
@@ -247,24 +257,29 @@ Oops ... your browser doesn't support the HTML5 canvas element
         </div>
     <div>
       Light X Translation 
-      <input id="xLight" type="range"
-      min="0" max="1" step="0.1" value ="1.0" />
+      0<input id="xLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />1
       
       </div>
       
       <div>
       Light Y Translation 
-      <input id="yLight" type="range"
-      min="0" max="1" step="0.1" value ="1.0" />
+      0<input id="yLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />1
       
       </div>
       
       <div>
       Light Z Translation 
-      <input id="zLight" type="range"
-      min="0" max="1" step="0.1" value ="1.0" />
+      0<input id="zLight" type="range"
+      min="0" max="1" step="0.1" value ="1.0" />1
       
+    </div>
+    <button id="texture_switch" >Toggle Texture</button>
+
+    </div>
       </div>
+
     </div>
     </div>
     
