@@ -23,11 +23,14 @@
           padding-left: 80px;
           padding-top: 50px;
         }
-        
-        
         </style>
 
 
+////////////////////////////////////////////////
+//                                            // 
+//////////////// VERTEX SHADER /////////////////   
+//                                            // 
+////////////////////////////////////////////////
 <script id="vertex-shader" type="x-shader/x-vertex">
 #version 300 es
 
@@ -50,7 +53,9 @@ uniform float uShininess;
 
 
 void main()
-{ 
+{   ////////////////////////////////////////////////
+    // ROTATION PART
+    ////////////////////////////////////////////////
     vec3 angles = radians(uTheta);
     vec3 c = cos(angles);
     vec3 s = sin(angles);
@@ -72,7 +77,9 @@ void main()
         0.0,  0.0, 1.0, 0.0,
         0.0,  0.0, 0.0, 1.0);
 
-
+    ////////////////////////////////////////////////
+    // LIGHT PART
+    ////////////////////////////////////////////////
 
         vec3 pos = -(uModelViewMatrix * aPosition).xyz;
         vec3 light = uLightPosition.xyz;
@@ -105,9 +112,6 @@ void main()
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
     gl_Position.z = -gl_Position.z;
 
-
-
-
     fTexCoord = vTexCoord;
     vColor = ambient + diffuse+specular;
     vColor.a = 1.0;
@@ -115,6 +119,12 @@ void main()
 }
 </script>
 
+
+////////////////////////////////////////////////
+//                                            // 
+//////////////// FRAGMENT SHADER ///////////////   
+//                                            // 
+////////////////////////////////////////////////
 <script id="fragment-shader" type="x-shader/x-fragment">
 
 #version 300 es
@@ -131,16 +141,22 @@ void
 main()
 {
    // fColor = vColor;
+    
     fColor = vColor * texture( texture_test, fTexCoord );
 }
 </script>
+
 
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MVnew.js"></script>
 <script type="text/javascript" src="homework1.js"></script>
 
-
+////////////////////////////////////////////////
+//                                            // 
+//////////////////// SLIDERS  //////////////////   
+//                                            // 
+////////////////////////////////////////////////
 <body>
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
