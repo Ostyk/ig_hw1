@@ -52,7 +52,7 @@ var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
 //light -- spotlight
 var SpotlightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-var SpotlightSpecular = vec4(1.0, 0.5, 0.5, 1.0) // not needed
+var SpotlightDirection = vec4(x_light, y_light, z_light, 0.0);
 
 
 // material desc
@@ -488,6 +488,12 @@ var render = function(){
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
     gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
     
+    gl.uniform1f(gl.getUniformLocation(program,"cutt_off"),cutt_off);
+    gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle)
+    gl.uniform1f(gl.getUniformLocation(program,"constantAttenuation"), constantAttenuation);
+    gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection))
+  
+
     gl.drawArrays(gl.TRIANGLES, 0, numVertices);
     requestAnimationFrame(render);
 }
