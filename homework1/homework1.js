@@ -38,17 +38,22 @@ var x_light = 1.0;
 var y_light = 1.0;
 var z_light = 1.0;
 
+// light desc
+var lightPosition = vec4(x_light, y_light, z_light, 0.0);
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); // not needed
+
 //light -- directional
 var lightPositionDirectional =  vec4(x_light, y_light, z_light, 0.0);
 var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
 var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
 
+//light -- spotlight
+var SpotlightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var SpotlightSpecular = vec4(1.0, 0.5, 0.5, 1.0) // not needed
 
-// light desc
-var lightPosition = vec4(x_light, y_light, z_light, 0.0);
-var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
-var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
 // material desc
 var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
@@ -57,7 +62,14 @@ var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
 var materialShininess = 100.0;
 
 var ambientColor, diffuseColor, specularColor;
-/////////
+
+// illumination from a light source
+var constantAttenuation =  -0.1 // constant 
+var spotLightAngle  = 10
+var cutt_off = 0.0
+
+
+///////////////
 
 
 var modelViewMatrix, projectionMatrix;
@@ -330,8 +342,11 @@ window.onload = function init() {
     configureTexture( image );
 
     
+//////////////////////////////////////////
+/// light
+////////////////////////////////////////// 
 
-////////////////////////////////////////// light
+    // light x material
     var ambientProduct = mult(lightAmbient, materialAmbient);
     var diffuseProduct = mult(lightDiffuse, materialDiffuse);
     var specularProduct = mult(lightSpecular, materialSpecular);
@@ -344,20 +359,35 @@ window.onload = function init() {
        specularProduct );
     gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
        lightPosition );
-    gl.uniform1f(gl.getUniformLocation(program, "uShininess"),
-        materialShininess );
-    // directional
+    // gl.uniform1f(gl.getUniformLocation(program, "uShininess"),
+    //     materialShininess );
 
-    // var ambientProductDirectional = mult(lightAmbientDirectional, materialAmbient);
-    // var diffuseProductDirectional = mult(lightDiffuseDirectional, materialDiffuse);
+        
+    // directional light x material
+    var ambientProductDirectional = mult(lightAmbientDirectional, materialAmbient);
+    var diffuseProductDirectional = mult(lightDiffuseDirectional, materialDiffuse);
     
-    // gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProductDirectional"),
-    //    ambientProductDirectional);
-    // gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProductDirectional"),
-    //    diffuseProductDirectional );
-    // gl.uniform4fv(gl.getUniformLocation(program, "uLightPositionDirectional"),
-    //    lightPositionDirectional );
+    gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProductDirectional"),
+       ambientProductDirectional);
+    gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProductDirectional"),
+       diffuseProductDirectional );
+    gl.uniform4fv(gl.getUniformLocation(program, "uLightPositionDirectional"),
+       lightPositionDirectional );
+    gl.uniform4fv(gl.getUniformLocation(program, 'uMaterialAmbient'),
+       flatten(materialAmbient)) ;// TO DO: change
     
+    // spotlight x material
+    var ambientProductSpotlight  =  mult(SpotlightAmbient, materialAmbient);
+    var diffuseProductSpotlight  =  mult(SpotlightDiffuse, materialDiffuse);
+    var ag = mult(ambientProduct, materialAmbient)
+
+    gl.uniform4fv(gl.getUniformLocation(program, 'uAmbientProductSpotlight'), flatten(ambientProductSpotlight))
+    gl.uniform4fv(gl.getUniformLocation(program, 'uDiffuseProductSpotlight'), flatten(diffuseProductSpotlight))
+    gl.uniform4fv(gl.getUniformLocation(program, "ag"),flatten(ag));
+  
+    gl.uniform4fv(gl.getUniformLocation(program,"uMaterialDiffuse"),flatten(materialDiffuse));
+  
+  
 
 
 //////////////////////////////////////////
