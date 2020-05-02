@@ -36,7 +36,6 @@ var x_light = -0.2;
 var y_light = -0.6;
 var z_light = 10.2;
 
-
 // light -- main params
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
 var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
@@ -52,14 +51,9 @@ var SpotlightAmbient = vec4(1.0, 1.0, 0.2, 1.0 );
 var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 var SpotlightDirection = vec4(-1.0, 2.0, -10.0, 0.0);
 
-
 // material desc
 var materialAmbient = vec4(0.8, 0.8, 0.8, 1.0);
 var materialDiffuse = vec4(0.8, 0.6, 0.6, 1.0);
-// var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
-// var materialShininess = 100.0;
-
-var ambientColor, diffuseColor, specularColor;
 
 // Light source -- illumination
 var constantAttenuation =  -0.1 // keep it the same

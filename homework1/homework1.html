@@ -127,7 +127,7 @@ in vec3 L_Directional,E_Directional;
 in vec3 L_SpotLight,E_SpotLight;
 
 // light 
-uniform vec4 uAmbientProduct, uDiffuseProduct,  uSpecularProduct;
+uniform vec4 uAmbientProduct, uDiffuseProduct;
 
 // light -- directional
 uniform vec4 uAmbientProductDirectional, uDiffuseProductDirectional;
@@ -140,7 +140,6 @@ uniform vec4 uMaterialAmbient;
 
 uniform float spotLightCutOff;
 uniform float spotLightAngle;
-// since we have costant attenuation, we can precompute this once
 
 void
 main()
