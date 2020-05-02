@@ -24,7 +24,7 @@ var x = 0.0;
 var y = 0.0;
 var axis = x;
 var dr = 5.0 * Math.PI/180.0;
-var  fovy = -70.0;  
+var  fovy = 70.0;  
 var  aspect = 1.0
 
 
@@ -32,31 +32,34 @@ var  aspect = 1.0
 ///////////////////// material + light
 
 // light settings
-var x_light = -1.2;
+var x_light = -0.2;
 var y_light = -0.6;
-var z_light = 9.2;
+var z_light = 10.2;
+// var x_light = 1.0;
+// var y_light =  1.0;
+// var z_light = 1.0;
+
 
 // light -- main params
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
-var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
-var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 ); // not needed
+var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
+var lightDiffuse = vec4(0.6, 0.6, 0.6, 1.0);
 
 //light -- directional
-var lightPositionDirectional =  vec4(x_light, y_light, z_light, 1.0);
-var lightAmbientDirectional = vec4(0.2, 0.2, 0.2, 1.0);
-var lightDiffuseDirectional = vec4(1.0, 1.0, 1.0, 1.0);
+var lightPositionDirectional =  vec4(2.0, 2.0, 2.0, 1.0);
+var lightAmbientDirectional = vec4(0.3, 0.3, 0.3, 1.0);
+var lightDiffuseDirectional = vec4(0.6, 0.6, 0.6, 1.0);
 
 //light -- spotlight
-var SpotlightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var SpotlightAmbient = vec4(1.0, 0.2, 0.2, 1.0 );
 var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-var SpotlightDirection = vec4(1.0, 0.5, 0.5, 0.0);
+var SpotlightDirection = vec4(-1.0, 2.0, -10.0, 0.0);
 
 
 // material desc
-var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
-var materialDiffuse = vec4(0.0, 0.7, 0.0, 1.0);
-var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialAmbient = vec4(0.8, 0.8, 0.8, 1.0);
+var materialDiffuse = vec4(0.8, 0.6, 0.6, 1.0);
+// var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
 // var materialShininess = 100.0;
 
 var ambientColor, diffuseColor, specularColor;
@@ -346,14 +349,14 @@ projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     // light x material
     var ambientProduct = mult(lightAmbient, materialAmbient);
     var diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    var specularProduct = mult(lightSpecular, materialSpecular);
+    // var specularProduct = mult(lightSpecular, materialSpecular);
 
     gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
        ambientProduct );
     gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
        diffuseProduct );
-    gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
-       specularProduct );
+    // gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
+    //    specularProduct );
     gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
        lightPosition );
     // gl.uniform1f(gl.getUniformLocation(program, "uShininess"),
