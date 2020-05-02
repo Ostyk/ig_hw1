@@ -20,10 +20,11 @@ out vec3 N, L, E;
 out float lightDistance;
 
 // Light -- directional
-out vec3 dir_N,dir_L,dir_E;
+out vec3 L_Directional,E_Directional;
+
 
 //Light -- spotlight
-out vec3 spot_N,spot_L,spot_E;
+out vec3 L_SpotLight,E_SpotLight;
 
 uniform vec3 uTheta;
 
@@ -75,24 +76,22 @@ void main()
         E = normalize( -pos );
       }
    
-    // directional light
+    // light -- directional 
     vec3 directionlight =  uLightPositionDirectional.xyz;
       if (uLightPositionDirectional.w == 0.0){
-        dir_L = normalize(directionlight);
+        L_Directional = normalize(directionlight);
       }
       else{
-        dir_L = normalize(directionlight - pos);
+        L_Directional = normalize(directionlight - pos);
       }
-      dir_E = -normalize(pos);
+      E_Directional = -normalize(pos);
    
-    // Spotlight
+    // light -- Spotlight 
     vec3 spotlight  = uSpotlightDirection.xyz;
-    spot_L = normalize(spotlight*vNormal.xyz);
-    spot_E  = normalize(spotlight - pos);
+    L_SpotLight = normalize(spotlight*vNormal.xyz);
+    E_SpotLight  = normalize(spotlight - pos);
    
-   
-    // attentuation factor 
-    // calculate the distance to the light source 
+    // compute distance from the source along with the attentuation
    
     lightDistance = sqrt(pow(L.x,2.0) + pow(L.y,2.0) + pow(L.z,2.0));
     attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
@@ -102,7 +101,6 @@ void main()
     gl_Position.z = -gl_Position.z;
 
     fTexCoord = vTexCoord;
-
 
 }
 </script>
@@ -121,92 +119,74 @@ precision mediump float;
 
 in vec4 vColor;
 in vec2 fTexCoord;
+out vec4 fColor;
+uniform sampler2D texture_test;
+uniform float texturetoggle;
 
-// Light
-in vec3 N, L, E;
+uniform vec4 ag;
 
-// distance 
 in float lightDistance;
-
-// attenuation 
 in float attenuation;
 
-// Directional
-in vec3 dir_N,dir_L,dir_E;
-
-// Spotlight
-in vec3 spot_N,spot_L,spot_E;
+in vec3 N, L, E;
+in vec3 L_Directional,E_Directional;
+in vec3 L_SpotLight,E_SpotLight;
 
 // light 
 uniform vec4 uAmbientProduct, uDiffuseProduct,  uSpecularProduct;
 
-// directional light
+// light -- directional
 uniform vec4 uAmbientProductDirectional, uDiffuseProductDirectional;
 
-// spotlight
+// light -- spotlight
 uniform vec4 uAmbientProductSpotlight;
 uniform vec4 uDiffuseProductSpotlight;
 uniform vec4 uMaterialDiffuse;
 uniform vec4 uMaterialAmbient;
 
-// direction for spot light 
 uniform float spotLightCuttOff;
 uniform float spotLightAngle;
-
-// shader
-uniform vec4 ag;
-
-out vec4 fColor;
-uniform sampler2D texture_test;
-uniform float texturetoggle;
-
-
-
 
 // since we have costant attenuation, we can precompute this once
 float spotLightCompute(){
   float spotFactor;
-  float spotCosine =  dot(spot_E , -L);
+  float spotCosine =  dot(E_SpotLight , -L);
   if (spotCosine > cos(radians(spotLightAngle))){
-      spotFactor = pow(spotCosine,spotLightCuttOff);
-      spotFactor = spotFactor * (1.0 - (1.0-spotCosine)*attenuation*1.0);
+      spotFactor = pow(spotCosine,spotLightCuttOff) * (1.0 - (1.0-spotCosine)*attenuation*1.0);
   }else{ spotFactor = 0.0;}
   return spotFactor;}
+
 
 void
 main()
 {
    fColor = vColor;
-   vec4 ci_color;
-   vec4 cs_color;
+   vec4 ci, cs;
 
-   vec4 ambient_  =  uAmbientProduct;
-   vec4 diffuse_  = uDiffuseProduct;
-
-   vec4 direction_ambient = uAmbientProduct;
-   vec4 direction_diffuse = uDiffuseProductDirectional;
-  
    float spotFactor = spotLightCompute();
 
+   ci = cs = ag * uMaterialAmbient + uAmbientProduct * uMaterialAmbient;
+
    if (max(dot(L,N),0.0)>=0.5){
-       ci_color = (ag*uMaterialAmbient + uAmbientProduct*uMaterialAmbient + uDiffuseProduct*uMaterialDiffuse) ;
+       ci = ci + uDiffuseProduct * uMaterialDiffuse;
    }else{
-       ci_color = (ag*uMaterialAmbient + uAmbientProduct*uMaterialAmbient)*spotFactor;
+       ci = ci*spotFactor;
    }
 
-   if (max(dot(dir_L,N),0.0)>=0.5){
-       cs_color = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient + direction_diffuse*uMaterialDiffuse);
+   if (max(dot(L_Directional,N),0.0)>=0.5){
+       cs = cs + uDiffuseProductDirectional * uMaterialDiffuse;
    }else{
-       cs_color  = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient)*spotFactor;
+       cs  = cs * spotFactor;
    }
     
     if(texturetoggle == 0.0){
-      fColor = (cs_color+ci_color)*vColor; // vColor ;
-      }else{
-          fColor = (cs_color+ci_color) * texture( texture_test, fTexCoord );
-      }
-      fColor.a = 1.0;
-  
+      fColor = (cs+ci)*vColor;
+    }
+    else{
+        fColor = (cs+ci) * texture( texture_test, fTexCoord );
+    }
+    
+    fColor.a = 1.0;
 }
 </script>
 
