@@ -206,7 +206,7 @@ float spotLightCalculation(){
 void
 main()
 {
-   // fColor = vColor;
+   fColor = vColor;
    // step first is to calculate the c_i and c_s 
    // c_i = a(g) * am +a(l) * am + d(l) * dm
 
@@ -241,7 +241,7 @@ main()
     
     
     if(texturetoggle == 0.0){
-      fColor = cs_color+ci_color; // vColor ;
+      fColor = (cs_color+ci_color)*vColor; // vColor ;
       }else{
           fColor = (cs_color+ci_color) * texture( texture_test, fTexCoord );
       }
@@ -329,8 +329,8 @@ Oops ... your browser doesn't support the HTML5 canvas element
      min="0.5" max="2" step="0.1" value="2" />
      2
      <div>
-      <button id = "Button6">Increase speed</button>
-      <button id = "Button7">Decrease speed</button>
+      <button id = "speedUp">Increase speed</button>
+      <button id = "speedDown">Decrease speed</button>
       </div>
     </div>
     

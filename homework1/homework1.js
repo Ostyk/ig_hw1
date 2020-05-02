@@ -25,7 +25,8 @@ var y = 0.0;
 var axis = x;
 var dr = 5.0 * Math.PI/180.0;
 var  fovy = 45.0;  
-var  aspect = 9.2;
+var  aspect = 1.0
+
 
 ///////////////////// material + light
 
@@ -375,23 +376,20 @@ projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     var ambientProductSpotlight  =  mult(SpotlightAmbient, materialAmbient);
     var diffuseProductSpotlight  =  mult(SpotlightDiffuse, materialDiffuse);
     var ag = mult(ambientProduct, materialAmbient);
+
     //this.console(ambientProductSpotlight)
     gl.uniform4fv(gl.getUniformLocation(program, 'uAmbientProductSpotlight'), flatten(ambientProductSpotlight))
     gl.uniform4fv(gl.getUniformLocation(program, 'uDiffuseProductSpotlight'), flatten(diffuseProductSpotlight))
     gl.uniform4fv(gl.getUniformLocation(program, "ag"),flatten(ag));
-  
     gl.uniform4fv(gl.getUniformLocation(program,"uMaterialDiffuse"),flatten(materialDiffuse));
   
   
 
 
 
-
-//////////////////////////////////////////// sliders for viewing parameters
-
-    document.getElementById("texture_switch").onclick = function(){
-        if(texturetoggle == 1.0){ texturetoggle = 0.0 }else{texturetoggle = 1.0}
-    }
+    //////////////////////////////////////////
+    /// Sliders
+    ////////////////////////////////////////// 
     document.getElementById("zFarSlider").oninput = function(event) {
         far = event.target.value;
     };
@@ -429,30 +427,34 @@ projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
         x_light = event.target.value
     }
     document.getElementById('yLight').oninput = function (event) {
-    y_light = event.target.value
+        y_light = event.target.value
     }
     document.getElementById('zLight').oninput = function (event) {
-    z_light = event.target.value
+        z_light = event.target.value
     }
-
-    document.getElementById("spotLightCuttOff").onchange =  function(event){
-        spotLightCuttOff = parseInt(event.target.value)
-  
+    document.getElementById("spotLightCuttOff").oninput =  function(event){
+        spotLightCuttOff = event.target.value
     }
-    document.getElementById("spotAngle").onchange =  function(event){
-        spotLightAngle = parseInt(event.target.value)
+    document.getElementById("spotAngle").oninput =  function(event){
+        spotLightAngle = event.target.value
     }
+    document.getElementById("ButtonX").onclick = function(){
+        axis = 0};
+    document.getElementById("ButtonY").onclick = function(){
+        axis = 1;};
+    document.getElementById("ButtonZ").onclick = function(){
+        axis = 2;};
+    document.getElementById("speedUp").onclick = function(){
+        speed += 0.5;};
+    document.getElementById("speedDown").onclick = function(){
+        speed -= 0.5;};
+    document.getElementById("ButtonT").onclick = function(){
+        flag = !flag;};
+    document.getElementById("texture_switch").onclick = function(){
+        if(texturetoggle == 1.0){
+            texturetoggle = 0.0 }
+        else{texturetoggle = 1.0}}
 
-
-document.getElementById('scaleSlider').value = 1
-document.getElementById("ButtonX").onclick = function(){axis = 0};
-document.getElementById("ButtonY").onclick = function(){axis = 1;};
-document.getElementById("ButtonZ").onclick = function(){axis = 2;};
-
-
-document.getElementById("Button6").onclick = function(){speed += 0.5;};
-document.getElementById("Button7").onclick = function(){speed -= 0.5;};
-document.getElementById("ButtonT").onclick = function(){flag = !flag;};
 
     render();
 }
@@ -466,7 +468,6 @@ var render = function(){
     gl.frontFace(gl.CCW)
     gl.cullFace(gl.BACK)
 
-    // eye = vec3(x,y,z);
     if(flag)  theta_rotation[axis] += speed;
     
     gl.uniform1f(gl.getUniformLocation(program, 'texturetoggle'), texturetoggle)
@@ -475,10 +476,8 @@ var render = function(){
                 radius*Math.sin(theta)*Math.sin(phi),
                 radius*Math.cos(theta));
 
-
     modelViewMatrix = lookAt(eye, at, up);
     projectionMatrix = perspective(fovy, aspect, near, far);
-
 
     modelViewMatrix = mult(modelViewMatrix, translate(x, y, z))
     modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
@@ -492,7 +491,6 @@ var render = function(){
     gl.uniform1f(gl.getUniformLocation(program,"uConstantAttenuation"), constantAttenuation);
     gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection));
 
-  
 
     gl.drawArrays(gl.TRIANGLES, 0, numVertices);
     requestAnimationFrame(render);
@@ -505,46 +503,49 @@ function resetButton(){
 
     document.getElementById("zFarSlider").value=10
     document.getElementById("zNearSlider").value=2
-
-
     document.getElementById("xSlider").value=0
     document.getElementById("ySlider").value=0
     document.getElementById("zSlider").value=0
-
     document.getElementById("fovSlider").value=40
     document.getElementById("aspectSlider").value=1
     document.getElementById('scaleSlider').value = 1
-
     document.getElementById('radiusSlider').value = 5
     document.getElementById('thetaSlider').value = 45
     document.getElementById('phiSlider').value = 360
-
     document.getElementById('xLight').value = 1.0
     document.getElementById('yLight').value = 1.0
     document.getElementById('zLight').value = 1.0
+
+    document.getElementById("spotLightCuttOff") = 0.0
+    document.getElementById("spotLightAngle") = 10
+    document.getElementById("ButtonX") = 
+    document.getElementById("ButtonY") = 
+    document.getElementById("speedUp") =
+    document.getElementById("speedDown") = 
+    document.getElementById("ButtonT") = flag;
+    document.getElementById("texture_switch") = 1.0
     // document.getElementById('speed').value = 0.01
 
-    far = 0.3
-    near = 10.0
+    far = 1.0
+    near = 45.0
     x = 0.0
     y = 0.0
-    z = 4.0
+    z = 0.0
     ascpect = 2
     fovy = 45.0
     scaling = 1
-
     radius = 5
     theta = 45
     phi = 360
     speed = 0.01
-
     x_light = 0.5;
     y_light = 0.5;
     z_light = 0.5;
-        
-    
+    spotLightCuttOff = 0.0;
+    spotLightAngle = 10;
 
-    
+        
 }
+
 
 
