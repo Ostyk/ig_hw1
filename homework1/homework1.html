@@ -142,15 +142,6 @@ uniform float spotLightCuttOff;
 uniform float spotLightAngle;
 // since we have costant attenuation, we can precompute this once
 
-
-float ComputeSpotFactor(){
-  float spotFactor;
-  float spotCosine =  dot(E_SpotLight , -L);
-  if (spotCosine > cos(radians(spotLightAngle))){
-      spotFactor = pow(spotCosine,spotLightCuttOff) * (1.0 - (1.0-spotCosine)*attenuation);
-  }else{ spotFactor = 0.0;}
-  return spotFactor;}
-
 void
 main()
 {
@@ -161,7 +152,11 @@ main()
   lightDistance = sqrt(pow(L.x,2.0) + pow(L.y,2.0) + pow(L.z,2.0));
   attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
 
-   float spotFactor = ComputeSpotFactor();
+  float spotCosine =  dot(E_SpotLight , -L);
+  float spotFactor;
+  if (spotCosine > cos(radians(spotLightAngle))){
+    spotFactor = pow(spotCosine,spotLightCuttOff) * (1.0 - (1.0-spotCosine)*attenuation);
+  }else{ spotFactor = 0.0;}
 
    ci = cs = ag * uMaterialAmbient + uAmbientProduct * uMaterialAmbient;
 
