@@ -138,7 +138,7 @@ uniform vec4 uDiffuseProductSpotlight;
 uniform vec4 uMaterialDiffuse;
 uniform vec4 uMaterialAmbient;
 
-uniform float spotLightCuttOff;
+uniform float spotLightCutOff;
 uniform float spotLightAngle;
 // since we have costant attenuation, we can precompute this once
 
@@ -155,7 +155,7 @@ main()
   float spotCosine =  dot(E_SpotLight , -L);
   float spotFactor;
   if (spotCosine > cos(radians(spotLightAngle))){
-    spotFactor = pow(spotCosine,spotLightCuttOff) * (1.0 - (1.0-spotCosine)*attenuation);
+    spotFactor = pow(spotCosine,spotLightCutOff) * (1.0 - (1.0-spotCosine)*attenuation);
   }else{ spotFactor = 0.0;}
 
    ci = cs = ag * uMaterialAmbient + uAmbientProduct * uMaterialAmbient;
@@ -299,8 +299,8 @@ Oops ... your browser doesn't support the HTML5 canvas element
         min="0" max="1" step="0.1" value ="1.0" />1
         </div>    
       <div>
-        Spotlight: cutt off
-        1<input id="spotLightCuttOff" type="range"
+        Spotlight: cut off
+        1<input id="spotLightCutOff" type="range"
         min="0" max="80" step="10" value ="10.0" />80
       </div>
       <div>

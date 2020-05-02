@@ -14,7 +14,7 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = -20.0;
+var theta = -30.0;
 var phi = 90.0;
 var scaling = 1
 var near = 2.0;
@@ -67,7 +67,7 @@ var ambientColor, diffuseColor, specularColor;
 // Light source -- illumination
 var constantAttenuation =  -0.1 // keep it the same
 var spotLightAngle  = 10
-var spotLightCuttOff = 0.0
+var spotLightCutOff = 0.0
 
 
 ///////////////
@@ -436,8 +436,8 @@ projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     document.getElementById('zLight').oninput = function (event) {
         z_light = event.target.value
     }
-    document.getElementById("spotLightCuttOff").oninput =  function(event){
-        spotLightCuttOff = event.target.value
+    document.getElementById("spotLightCutOff").oninput =  function(event){
+        spotLightCutOff = event.target.value
     }
     document.getElementById("spotAngle").oninput =  function(event){
         spotLightAngle = event.target.value
@@ -490,7 +490,7 @@ var render = function(){
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
     gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
     
-    gl.uniform1f(gl.getUniformLocation(program,"spotLightCuttOff"),spotLightCuttOff);
+    gl.uniform1f(gl.getUniformLocation(program,"spotLightCutOff"),spotLightCutOff);
     gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle);
     gl.uniform1f(gl.getUniformLocation(program,"uConstantAttenuation"), constantAttenuation);
     gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection));
@@ -519,7 +519,7 @@ function resetButton(){
     document.getElementById('xLight').value = 1.0
     document.getElementById('yLight').value = 1.0
     document.getElementById('zLight').value = 1.0
-    document.getElementById("spotLightCuttOff").value = 1.0;
+    document.getElementById("spotLightCutOff").value = 1.0;
     document.getElementById("spotLightAngle").value = 10
     document.getElementById("texture_switch").value = 1.0
     // document.getElementById('speed').value = 0.01
@@ -539,7 +539,7 @@ function resetButton(){
     x_light = 0.5;
     y_light = 0.5;
     z_light = 0.5;
-    spotLightCuttOff = 0.0;
+    spotLightCutOff = 0.0;
     spotLightAngle = 10;
         
 }
