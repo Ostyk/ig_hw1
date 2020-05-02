@@ -28,6 +28,7 @@ var  fovy = -70.0;
 var  aspect = 1.0
 
 
+
 ///////////////////// material + light
 
 // light settings
