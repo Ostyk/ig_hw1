@@ -21,6 +21,7 @@
 \usepackage{upquote} % Upright quotes for verbatim code
 \usepackage{fancyvrb} % verbatim replacement that allows latex
 \usepackage{float}
+\usepackage{wrapfig}
 
 \usepackage{amsmath}
 \usepackage{algorithm}
@@ -139,40 +140,33 @@ captionpos=b
 %\tableofcontents
 
 \section{Introduction}
-
-
 This is a documentation report describing the techniques used in the First Homework for the Interactive Graphics course. Given a baseline file of a cube, the task was to modify it by
 \begin{itemize}
 \item  expanding the number of vertices (20-30) with each having a normal and texture coordinates.
 \item adding a viewer position and a a perspective projection
 \item computing the ModelView and Projection matrices in the Javascript application
-\item adding two lights sources
-\begin{enumerate}
-\item Directional
-\item Spotlight
-\end{enumerate}
+\item adding two lights sources: Directional and a Spotlight
 \item assigning to the object a material with the relevant properties
 \item  Implementing a per-fragment shading model
 \item adding a texture loaded from file, with the pixel color a combination of the color
 computed using the lighting model and the texture.
 \end{itemize}
 
-
-
 \section{Documentation}
 \subsection{Creating an irregular object}
-My idea was to create some octagon Hourglass as seen in Figure \ref{img:hourglass}. In order to accomplish that task I decied to create out of a series of triangles (\texttt{tri function{}}) and quadrilaterals (\texttt{quad function{}}). However, unlike in Figure \ref{img:hourglass}, mine would have a more visible inner part.  
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width=0.3\columnwidth, angle = 0]{img/hourglass.png}
-\end{center}
+\begin{wrapfigure}{r}{0.4\textwidth}
+\centering
+\includegraphics[width=0.3\textwidth, angle = 0]{img/hourglass.png}
 \caption{Octagon Hourglass \cite{hourglass}}
 \label{img:hourglass}
-\end{figure}
+\end{wrapfigure}
+My idea was to re-create an octagon Hourglass as seen in Figure \ref{img:hourglass}. In order to accomplish that task I decied to create out of a series of triangles (\texttt{tri function{}}) and quadrilaterals (\texttt{quad function{}}). However, unlike in Figure \ref{img:hourglass}, mine would have a more visible inner part.  
+
+
 
 I modeled the vertices based 4 faces of different widths, with the top and bottom sharing one value for the width, and the inner "neck" of the hour composed of two octagons also sharing one value. To accomplish this task I decided to run the following python code which allowed me obtain various initial sizes.
-
+\clearpage
 \begin{lstlisting}[caption={Getting values for the vertices},label={lst:python},language=python]
 def getshapevalues(height_value, vertices=8, width=1):
     coords = []
@@ -200,15 +194,31 @@ Hence, using this procedure, from the four octagon faces, and inner points of th
 
 \subsection{ModelView and Projection matrices}
 
-Next, I added a viewer position, a projection and computed the ModelView and Projection matrices using a Javascript application. The ModelView was computed using the \texttt{lookAt} function which can concatenate with modeling transformations. Subsequently, sliders were added to the HTML file, which include the following transformations: radius, theta, phi, Near, Far, Scale, FOV (field of view), aspect. Additionaly for animation and asthetic reasons enabled buttons which through automatic increments of theta, and appropriate rotation matrices allow the rotation of the hourglass around the roll pitch yaw angles. Moreover, the shape can be slided along each o the X, Y, and Z axes.
+Next, I added a viewer position, a projection and computed the ModelView and Projection matrices using a Javascript application. The ModelView was computed using the \texttt{lookAt} function which can concatenate with modeling transformations. Subsequently, sliders were added to the HTML file, which include the following transformations: radius, theta, phi, Near, Far, Scale, FOV (field of view), aspect. Additionaly for animation and asthetic reasons enabled buttons which through automatic increments of theta, and appropriate rotation matrices allow the rotation of the hourglass around the roll pitch yaw angles. Moreover, the shape can be translated along each of the X, Y, and Z world axes.
 
 \subsection{Lighting: Directional and spotlight}
 TO DO, make x y and z sliders work
 change it up a bit
 \subsection{Material}
 descrive the random material, get rid of the specular
-\subsection{per-fragment shading model}
-equations
+\clearpage
+\subsection{Per-fragment shading model}
+The per-fragment shading model used is called the Cartoon Shade Algorithm \cite{shade}
+First, we had to calculate the illuminated diffuse color as in Equation \ref{eq1}, which is the vertex color. Next, the shadowed diffuse color in Equation \ref{eq2}. Finally once, we computed the value of the product of the unit vector from the light source to the vertex $\overrightarrow{L}$ and the unit vector
+normal to the surface at the vertex  $\overrightarrow{n}$, we assign to the fragment the value based on the check in Equation 3. Note that the result of this product is the cosine of the angle between the two vectors.
+\begin{equation}\label{eq1}
+C_i = a_g \times a_m + a_l \times a_m + d_l \times d_m  
+\end{equation}
+\begin{equation}\label{eq2}
+C_s =  a_g \times a_m + a_l \times a_m
+\end{equation}
+\begin{equation}\label{eq3}
+\text{ fragment assignment} =\begin{cases}
+    C_i, & \text{if $\max(\overrightarrow{L} \cdot \overrightarrow{n}, 0)\geq0$}.\\
+    C_s, & \text{if $\max(\overrightarrow{L} \cdot \overrightarrow{n}, 0)<0$}.
+  \end{cases}
+\end{equation}
+
 \subsection{Texture from file}
 Taken from the internet, to simulate the surface of the moon.
 \section{Conclusions}
@@ -222,6 +232,8 @@ Taken from the internet, to simulate the surface of the moon.
 \begin{thebibliography}{1}
 
 \bibitem{hourglass}   \url{http://evershinegift.com/Index.asp?Product420/742.html}
+\bibitem{shade} Lake, Adam \& Marshall, Carl \& Harris, Mark \& Blackstein, Marc. (2000). Stylized Rendering Techniques For Scalable Real-Time 3D Animation. Proceedings of the Symposium on Non-Photorealistic Animation and Rendering. 10.1145/340916.340918.  \url{https://dl.acm.org/doi/pdf/10.1145/340916.340918}
+\bibitem{docs} \url{https://www.khronos.org/registry/webgl/specs/latest/2.0}
 
 \end{thebibliography}
 \end{document}

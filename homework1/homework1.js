@@ -2,15 +2,11 @@
 
 var canvas;
 var gl;
-
-var numVertices = 48;
-
+var numVertices;
 var numChecks = 8;
 var texSize = 64;
 var program;
-
 var c;
-
 var flag = false;
 
 var positionsArray = [];
@@ -21,7 +17,7 @@ var radius = 5.0;
 var theta = 0.0;
 var phi = 0.0;
 var scaling = 1
-var near = 77.25;
+var near = 45.0;
 var far = 1.0;
 var z = 0.0;
 var x = 0.0;
@@ -29,16 +25,16 @@ var y = 0.0;
 var axis = x;
 var dr = 5.0 * Math.PI/180.0;
 var  fovy = 45.0;  
-var  aspect = 2;
+var  aspect = 9.2;
 
 ///////////////////// material + light
 
 // light settings
 var x_light = -1.2;
 var y_light = -0.6;
-var z_light = 10.2;
+var z_light = 9.2;
 
-// light desc
+// light -- main params
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -59,22 +55,19 @@ var SpotlightDirection = vec4(1.0, 0.5, 0.5, 0.0);
 var materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
 var materialDiffuse = vec4(0.0, 0.7, 0.0, 1.0);
 var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
-var materialShininess = 100.0;
+// var materialShininess = 100.0;
 
 var ambientColor, diffuseColor, specularColor;
 
-// illumination from a light source
-var constantAttenuation =  -0.1 // constant 
+// Light source -- illumination
+var constantAttenuation =  -0.1 // keep it the same
 var spotLightAngle  = 10
-var cutt_off = 0.0
+var spotLightCuttOff = 0.0
 
 
 ///////////////
-
-
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
-
 var rotThetaLoc;
 var theta_rotation = vec3(90.0, 90.0, 90.0);
 
@@ -96,7 +89,6 @@ var texturetoggle =  1.0
 
 
 var vertices = [
-
 // bottommost octagon
 vec4(0.6, 0.0, -1.0, 1.0), // point 0
 vec4(0.3*Math.sqrt(2), 0.3*Math.sqrt(2), -1.0, 1.0), // point 1
@@ -443,14 +435,12 @@ projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
     z_light = event.target.value
     }
 
-    document.getElementById("cutt_off").onchange =  function(event){
-        cutt_off = parseInt(event.target.value)
+    document.getElementById("spotLightCuttOff").onchange =  function(event){
+        spotLightCuttOff = parseInt(event.target.value)
   
     }
-  
     document.getElementById("spotAngle").onchange =  function(event){
         spotLightAngle = parseInt(event.target.value)
-        
     }
 
 
@@ -464,8 +454,6 @@ document.getElementById("Button6").onclick = function(){speed += 0.5;};
 document.getElementById("Button7").onclick = function(){speed -= 0.5;};
 document.getElementById("ButtonT").onclick = function(){flag = !flag;};
 
-// this.console.log(rotate(theta[x], vec3(1, 0, 0)))
-// this.console.log(x)
     render();
 }
 
@@ -499,10 +487,9 @@ var render = function(){
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
     gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
     
-    gl.uniform1f(gl.getUniformLocation(program,"cutt_off"),cutt_off);
+    gl.uniform1f(gl.getUniformLocation(program,"spotLightCuttOff"),spotLightCuttOff);
     gl.uniform1f(gl.getUniformLocation(program,"spotLightAngle")  ,spotLightAngle);
     gl.uniform1f(gl.getUniformLocation(program,"uConstantAttenuation"), constantAttenuation);
-    //this.console(SpotlightDirection)
     gl.uniform4fv(gl.getUniformLocation(program, 'uSpotlightDirection'), flatten(SpotlightDirection));
 
   

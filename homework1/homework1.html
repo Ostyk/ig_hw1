@@ -41,14 +41,14 @@ in vec2 vTexCoord;
 out vec2 fTexCoord;
 out vec4 vColor;
 
-//Normal light parameters
+// Light
 out vec3 N, L, E;
 out float distance_light;
 
-//directional light parameters 
+// Light -- directional
 out vec3 dir_N,dir_L,dir_E;
 
-//Spot light parameter
+//Light -- spotlight
 out vec3 spot_N,spot_L,spot_E;
 
 uniform vec3 uTheta;
@@ -92,36 +92,36 @@ void main()
     vec3 pos=-(uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
 
     vec3 light=uLightPosition.xyz;
-     if(uLightPosition.w == 0.0)  L = normalize(light.xyz);
-       else  L = normalize(light.xyz/uLightPosition.w - pos);
-    N = normalize((uModelViewMatrix*vNormal).xyz);
-      E = normalize( -pos );
+     if(uLightPosition.w == 0.0){
+        L = normalize(light.xyz);
+      }
+     else{
+        L = normalize(light.xyz/uLightPosition.w - pos);
+        N = normalize((uModelViewMatrix*vNormal).xyz);
+        E = normalize( -pos );
+      }
+   
+    // directional light
+    vec3 directionlight =  uLightPositionDirectional.xyz;
+      if (uLightPositionDirectional.w == 0.0){
+        dir_L = normalize(directionlight);
+      }
+      else{
+        dir_L = normalize(directionlight - pos);
+      }
+      dir_E = -normalize(pos);
+   
+    // Spotlight
+    vec3 spotlight  = uSpotlightDirection.xyz;
+    spot_L = normalize(spotlight*vNormal.xyz);
+    spot_E  = normalize(spotlight - pos);
    
    
+    // attentuation factor 
+    // calculate the distance to the light source 
    
-       vec3 directionlight =  uLightPositionDirectional.xyz;
-   
-       if (uLightPositionDirectional.w == 0.0){
-       dir_L = normalize(directionlight);
-       }else{
-   
-           dir_L = normalize(directionlight - pos);
-       }
-       dir_E = -normalize(pos);
-   
-       
-       vec3 spotlight  = uSpotlightDirection.xyz;
-       spot_L = normalize(spotlight*vNormal.xyz);
-       
-       spot_E  = normalize(spotlight - pos);
-   
-   
-        // attentuation factor 
-       // calculate the distance to the light source 
-   
-        distance_light = sqrt(pow(L.x,2.0)+pow(L.y,2.0)+pow(L.z,2.0));
-   
-        attenuation = 1.0/(uConstantAttenuation*distance_light+ 1.0);
+    distance_light = sqrt(pow(L.x,2.0)+pow(L.y,2.0)+pow(L.z,2.0));
+    attenuation = 1.0/(uConstantAttenuation*distance_light+ 1.0);
     
       
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
@@ -176,7 +176,7 @@ uniform vec4 uMaterialAmbient;
 
 // direction for spot light 
 uniform float shininess;
-uniform float cutt_off;
+uniform float spotLightCuttOff;
 uniform float spotLightAngle;
 
 // shader
@@ -188,12 +188,14 @@ uniform float texturetoggle;
 
 
 
+
+
 float spotLightCalculation(){
   float spot_factor ;
  float spot_cosine =  dot(spot_E , -L);
   if (spot_cosine > cos(radians(spotLightAngle))){
       // assigning value to spot factor 
-      spot_factor = pow(spot_cosine,cutt_off);
+      spot_factor = pow(spot_cosine,spotLightCuttOff);
       spot_factor = spot_factor * (1.0 - (1.0-spot_cosine)*attenuation*1.0);
   }else{
       // point outside cone of light  
@@ -264,9 +266,6 @@ main()
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
 <img id = "texImage" src = "https://i.imgur.com/vA23abOr.jpg" crossorigin="anonymous" hidden></img>
-
-<!-- <img id = "texImage" src = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTkCwUqCczekkzed0caHGGwz67CTeYjEmIhZJNbfiptTW7Yz-0K&usqp=CAU" crossorigin="anonymous" hidden></img> -->
-<!-- <img id = "texImage" src = "SA2011_black.gif" hidden></img> -->
 
 <div class="container">
     <div class="first-box">
@@ -375,15 +374,15 @@ Oops ... your browser doesn't support the HTML5 canvas element
     </div>
     
     <div>
-      cutt off
-      0<input id="cutt_off" type="range"
+      Spotlight: cutt off
+      1<input id="spotLightCuttOff" type="range"
       min="0" max="80" step="10" value ="10.0" />80
     </div>
 
     <div>
-      spotAngle
+      Spotlight: angle
       0<input id="spotAngle" type="range"
-      min="10" max="80" step="0.1" value ="10.0" />80
+      min="10" max="100" step="0.1" value ="10.0" />100
     </div>
   </div>
     
