@@ -14,17 +14,17 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = -30.0;
+var theta = -50.0;
 var phi = 90.0;
 var scaling = 1
 var near = 2.0;
-var far = 10.0;
+var far = 70.0;
 var z = 0.0;
 var x = 0.0;
 var y = 0.0;
 var axis = x;
 var dr = 5.0 * Math.PI/180.0;
-var  fovy = 70.0;  
+var  fovy = 60.0;  
 var  aspect = 1.0
 
 
@@ -35,9 +35,6 @@ var  aspect = 1.0
 var x_light = -0.2;
 var y_light = -0.6;
 var z_light = 10.2;
-// var x_light = 1.0;
-// var y_light =  1.0;
-// var z_light = 1.0;
 
 
 // light -- main params
@@ -51,7 +48,7 @@ var lightAmbientDirectional = vec4(0.3, 0.3, 0.3, 1.0);
 var lightDiffuseDirectional = vec4(0.6, 0.6, 0.6, 1.0);
 
 //light -- spotlight
-var SpotlightAmbient = vec4(1.0, 0.2, 0.2, 1.0 );
+var SpotlightAmbient = vec4(1.0, 1.0, 0.2, 1.0 );
 var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 var SpotlightDirection = vec4(-1.0, 2.0, -10.0, 0.0);
 
