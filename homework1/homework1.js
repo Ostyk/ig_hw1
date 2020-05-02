@@ -14,17 +14,17 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = 0.0;
+var theta = -20.0;
 var phi = 90.0;
 var scaling = 1
-var near = 45.0;
-var far = 1.0;
+var near = 2.0;
+var far = 10.0;
 var z = 0.0;
 var x = 0.0;
 var y = 0.0;
 var axis = x;
 var dr = 5.0 * Math.PI/180.0;
-var  fovy = 45.0;  
+var  fovy = -70.0;  
 var  aspect = 1.0
 
 

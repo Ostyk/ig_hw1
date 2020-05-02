@@ -17,7 +17,7 @@ out vec4 vColor;
 
 // Light
 out vec3 N, L, E;
-out float distance_light;
+out float lightDistance;
 
 // Light -- directional
 out vec3 dir_N,dir_L,dir_E;
@@ -94,8 +94,8 @@ void main()
     // attentuation factor 
     // calculate the distance to the light source 
    
-    distance_light = sqrt(pow(L.x,2.0)+pow(L.y,2.0)+pow(L.z,2.0));
-    attenuation = 1.0/(uConstantAttenuation*distance_light+ 1.0);
+    lightDistance = sqrt(pow(L.x,2.0) + pow(L.y,2.0) + pow(L.z,2.0));
+    attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
     
       
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
@@ -126,7 +126,7 @@ in vec2 fTexCoord;
 in vec3 N, L, E;
 
 // distance 
-in float distance_light;
+in float lightDistance;
 
 // attenuation 
 in float attenuation;
@@ -144,12 +144,12 @@ uniform vec4 uAmbientProduct, uDiffuseProduct,  uSpecularProduct;
 uniform vec4 uAmbientProductDirectional, uDiffuseProductDirectional;
 
 // spotlight
-uniform vec4 uAmbientProductSpotlight, uDiffuseProductSpotlight;
+uniform vec4 uAmbientProductSpotlight;
+uniform vec4 uDiffuseProductSpotlight;
 uniform vec4 uMaterialDiffuse;
 uniform vec4 uMaterialAmbient;
 
 // direction for spot light 
-uniform float shininess;
 uniform float spotLightCuttOff;
 uniform float spotLightAngle;
 
@@ -163,56 +163,42 @@ uniform float texturetoggle;
 
 
 
+// since we have costant attenuation, we can precompute this once
+float spotLightCompute(){
+  float spotFactor;
+  float spotCosine =  dot(spot_E , -L);
+  if (spotCosine > cos(radians(spotLightAngle))){
+      spotFactor = pow(spotCosine,spotLightCuttOff);
+      spotFactor = spotFactor * (1.0 - (1.0-spotCosine)*attenuation*1.0);
+  }else{ spotFactor = 0.0;}
+  return spotFactor;}
 
-float spotLightCalculation(){
-  float spot_factor ;
- float spot_cosine =  dot(spot_E , -L);
-  if (spot_cosine > cos(radians(spotLightAngle))){
-      // assigning value to spot factor 
-      spot_factor = pow(spot_cosine,spotLightCuttOff);
-      spot_factor = spot_factor * (1.0 - (1.0-spot_cosine)*attenuation*1.0);
-  }else{
-      // point outside cone of light  
-          spot_factor = 0.0; // light will be no color 
-      }
-  return spot_factor;
-    }
 void
 main()
 {
    fColor = vColor;
-   // step first is to calculate the c_i and c_s 
-   // c_i = a(g) * am +a(l) * am + d(l) * dm
+   vec4 ci_color;
+   vec4 cs_color;
 
-   // where am  is nothing but ambient , dm is diffuse coffecient of material 
    vec4 ambient_  =  uAmbientProduct;
    vec4 diffuse_  = uDiffuseProduct;
 
    vec4 direction_ambient = uAmbientProduct;
    vec4 direction_diffuse = uDiffuseProductDirectional;
-
-   // finding the spot factor 
   
-   float spot_factor = spotLightCalculation();
+   float spotFactor = spotLightCompute();
 
-
-   // checking 
-   vec4 ci_color;
    if (max(dot(L,N),0.0)>=0.5){
-       ci_color = (ag*uMaterialAmbient + ambient_*uMaterialAmbient + diffuse_*uMaterialDiffuse) ;
+       ci_color = (ag*uMaterialAmbient + uAmbientProduct*uMaterialAmbient + uDiffuseProduct*uMaterialDiffuse) ;
    }else{
-       ci_color = (ag*uMaterialAmbient + ambient_*uMaterialAmbient)*spot_factor;
+       ci_color = (ag*uMaterialAmbient + uAmbientProduct*uMaterialAmbient)*spotFactor;
    }
-
-
-   vec4 cs_color;
 
    if (max(dot(dir_L,N),0.0)>=0.5){
        cs_color = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient + direction_diffuse*uMaterialDiffuse);
    }else{
-       cs_color  = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient)*spot_factor;
+       cs_color  = (ag*uMaterialAmbient + direction_ambient*uMaterialAmbient)*spotFactor;
    }
-    
     
     if(texturetoggle == 0.0){
       fColor = (cs_color+ci_color)*vColor; // vColor ;
