@@ -15,7 +15,7 @@ var normalsArray = []
 
 var radius = 5.0;
 var theta = 0.0;
-var phi = 0.0;
+var phi = 90.0;
 var scaling = 1
 var near = 45.0;
 var far = 1.0;
@@ -515,15 +515,9 @@ function resetButton(){
     document.getElementById('xLight').value = 1.0
     document.getElementById('yLight').value = 1.0
     document.getElementById('zLight').value = 1.0
-
-    document.getElementById("spotLightCuttOff") = 0.0
-    document.getElementById("spotLightAngle") = 10
-    document.getElementById("ButtonX") = 
-    document.getElementById("ButtonY") = 
-    document.getElementById("speedUp") =
-    document.getElementById("speedDown") = 
-    document.getElementById("ButtonT") = flag;
-    document.getElementById("texture_switch") = 1.0
+    document.getElementById("spotLightCuttOff").value = 1.0;
+    document.getElementById("spotLightAngle").value = 10
+    document.getElementById("texture_switch").value = 1.0
     // document.getElementById('speed').value = 0.01
 
     far = 1.0
@@ -543,7 +537,6 @@ function resetButton(){
     z_light = 0.5;
     spotLightCuttOff = 0.0;
     spotLightAngle = 10;
-
         
 }
 
