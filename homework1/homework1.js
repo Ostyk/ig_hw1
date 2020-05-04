@@ -9,6 +9,9 @@ var program;
 var c;
 var flag = false;
 
+// TESTING:
+var nMatrix, nMatrixLoc;
+
 var positionsArray = [];
 var colorsArray = [];
 var normalsArray = []
@@ -27,7 +30,15 @@ var dr = 5.0 * Math.PI/180.0;
 var  fovy = 60.0;  
 var  aspect = 1.0
 
+var near = 2;
+var far = 10;
+var radius = 6.0;
+var theta = -70.0;
+var phi = 80.0;
+var dr = 5.0 * Math.PI / 180.0;
 
+var fovy = 70.0; // Field-of-view in Y direction angle (in degrees)
+var aspect = 1.0; // Viewport aspect ratio
 
 ///////////////////// material + light
 
@@ -38,12 +49,12 @@ var z_light = 10.2;
 
 
 // light -- main params
-var lightPosition = vec4(x_light, y_light, z_light, 1.0);
+var lightPosition = vec4(1.0, 1.0, 1.0, 1.0); // The
 var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
 var lightDiffuse = vec4(0.2, 0.1, 0.6, 1.0);
 
 //light -- directional
-var lightPositionDirectional =  vec4(1.0, 2.0, 2.0, 1.0);
+var lightPositionDirectional =  vec4(-2.0, 2.0, 2.0, 0.0);
 var lightAmbientDirectional = vec4(0.2, 0.8, 0.9, 1.0);
 var lightDiffuseDirectional = vec4(0.6, 0.6, 0.6, 1.0);
 
@@ -163,7 +174,7 @@ function tri(a, b, c) {
     var t2 = subtract(vertices[c], vertices[b])
     var normal = cross(t1, t2)
     normal = vec3(normal)
-    normal = normalize(normal)
+    //normal = normalize(normal)
 
     positionsArray.push(vertices[a])
     normalsArray.push(normal)
@@ -186,7 +197,7 @@ function quad(a, b, c, d) {
     var t2 = subtract(vertices[c], vertices[b]);
     var normal = cross(t1, t2);
     var normal = vec3(normal);
-    normal = normalize(normal);
+    //normal = normalize(normal);
 
     positionsArray.push(vertices[a]);
     normalsArray.push(normal);
@@ -332,6 +343,7 @@ window.onload = function init() {
 //////////////////////////////////////////
 modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
 projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
+nMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
 
 //////////////////////////////////////////
 /// light
@@ -474,11 +486,14 @@ var render = function(){
     modelViewMatrix = lookAt(eye, at, up);
     projectionMatrix = perspective(fovy, aspect, near, far);
 
+    nMatrix = normalMatrix(modelViewMatrix, true );
+
     modelViewMatrix = mult(modelViewMatrix, translate(x, y, z))
     modelViewMatrix = mult(modelViewMatrix, scale(scaling, scaling, scaling))
 
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+    gl.uniformMatrix3fv(nMatrixLoc, false, flatten(nMatrix));
     gl.uniform3fv( gl.getUniformLocation(program, "uTheta"), theta_rotation);
     
     gl.uniform1f(gl.getUniformLocation(program,"spotLightCutOff"),spotLightCutOff);

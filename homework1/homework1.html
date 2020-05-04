@@ -24,7 +24,9 @@ out vec3 L_Directional,E_Directional;
 
 
 //Light -- spotlight
-out vec3 L_SpotLight,E_SpotLight;
+out vec3 L_SpotLight, E_SpotLight;
+
+uniform mat3 normalMatrix;
 
 uniform vec3 uTheta;
 
@@ -36,6 +38,7 @@ uniform float uShininess;
 
 uniform vec4 uLightPositionDirectional;
 uniform vec4 uSpotlightDirection;
+
 //uniform float uConstantAttenuation; 
 //out float uConstantAttenuation;
 
@@ -63,35 +66,32 @@ void main()
     ////////////////////////////////////////////////
     // LIGHT PART
     ////////////////////////////////////////////////
-    vec3 pos= -(uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
+    
+  
+    vec3 pos = (uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
 
-    vec3 light=uLightPosition.xyz;
-     if(uLightPosition.w == 0.0){
-        L = normalize(light.xyz);
-      }
-     else{
-        L = normalize(light.xyz/uLightPosition.w - pos);
-        N = normalize((uModelViewMatrix*vNormal).xyz);
-        E = normalize( -pos );
-      }
+     if(uLightPosition.w == 0.0)
+        {L = normalize(uLightPosition.xyz);}
+     else {L = normalize(uLightPosition.xyz - pos);}
+      
    
     // light -- directional 
-    vec3 directionlight =  uLightPositionDirectional.xyz;
       if (uLightPositionDirectional.w == 0.0){
-        L_Directional = normalize(directionlight);
+        L_Directional = normalize(uLightPositionDirectional.xyz);
       }
       else{
-        L_Directional = normalize(directionlight - pos);
+        L_Directional = normalize(uLightPositionDirectional.xyz - pos);
+      
       }
-      E_Directional = -normalize(pos);
+    
+    E_Directional = -normalize(pos); // V
    
     // light -- Spotlight 
-    vec3 spotlight  = uSpotlightDirection.xyz;
-    L_SpotLight = normalize(spotlight*vNormal.xyz);
-    E_SpotLight  = normalize(spotlight - pos);
+    L_SpotLight = normalize(normalMatrix*vNormal.xyz); // N
+    E_SpotLight  = normalize(uSpotlightDirection.xyz - pos); // D
    
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
-    gl_Position.z = -gl_Position.z;
+    //gl_Position.z = -gl_Position.z;
 
     fTexCoord = vTexCoord;
 
@@ -151,7 +151,7 @@ main()
   lightDistance = sqrt(pow(L.x,2.0) + pow(L.y,2.0) + pow(L.z,2.0));
   attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
 
-  float spotCosine =  dot(E_SpotLight , -L);
+  float spotCosine =  max(dot(E_SpotLight , -L), 0.0);
   float angle_ = acos(spotCosine);
 
   float spotFactor;
@@ -163,7 +163,7 @@ main()
 
   // spotlight shade
    if (max(dot(L,N),0.0)>=0.5){
-       ci = ci + uDiffuseProduct;
+       ci = (ci + uDiffuseProduct)*spotFactor;
    }else{
        ci = ci*spotFactor;
    }
@@ -172,7 +172,7 @@ main()
    if (max(dot(L_Directional,N),0.0)>=0.5){
        cs = cs + uDiffuseProductDirectional;
    }else{
-       cs  = cs * spotFactor;
+       cs  = cs;
    }
     
     if(texturetoggle == 0.0){
