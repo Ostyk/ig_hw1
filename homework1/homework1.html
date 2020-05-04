@@ -63,7 +63,7 @@ void main()
     ////////////////////////////////////////////////
     // LIGHT PART
     ////////////////////////////////////////////////
-    vec3 pos=-(uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
+    vec3 pos= -(uModelViewMatrix*(rz * ry * rx * aPosition)).xyz;
 
     vec3 light=uLightPosition.xyz;
      if(uLightPosition.w == 0.0){
@@ -152,21 +152,25 @@ main()
   attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
 
   float spotCosine =  dot(E_SpotLight , -L);
+  float angle_ = acos(spotCosine);
+
   float spotFactor;
-  if (spotCosine > cos(radians(spotLightAngle))){
-    spotFactor = pow(spotCosine,spotLightCutOff) * (1.0 - (1.0-spotCosine)*attenuation);
+  if (angle_ < radians(spotLightAngle)){
+    spotFactor = pow(spotCosine,spotLightCutOff) * attenuation;
   }else{ spotFactor = 0.0;}
 
-   ci = cs = ag * uMaterialAmbient + uAmbientProduct * uMaterialAmbient;
+   ci = cs = ag + uAmbientProduct ;
 
+  // spotlight shade
    if (max(dot(L,N),0.0)>=0.5){
-       ci = ci + uDiffuseProduct * uMaterialDiffuse;
+       ci = ci + uDiffuseProduct;
    }else{
        ci = ci*spotFactor;
    }
 
+   // directional shade
    if (max(dot(L_Directional,N),0.0)>=0.5){
-       cs = cs + uDiffuseProductDirectional * uMaterialDiffuse;
+       cs = cs + uDiffuseProductDirectional;
    }else{
        cs  = cs * spotFactor;
    }
@@ -199,7 +203,8 @@ main()
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
-<img id = "texImage" src = "https://i.imgur.com/vA23abOr.jpg" crossorigin="anonymous" hidden></img>
+<!-- <img id = "texImage" src = "https://i.imgur.com/vA23abOr.jpg" crossorigin="anonymous" hidden></img> -->
+<img id = "texImage" src = "../desert.jpg" hidden></img>
 <div>
     <button id="texture_switch" class="buttonbig button2" >Toggle Texture</button>
       <input type="button" class="buttonbig button2" value="RESET" onclick="resetButton()">
@@ -281,20 +286,20 @@ Oops ... your browser doesn't support the HTML5 canvas element
         <h2> Light manipulation </h2>
         <div>
         Light X Translation 
-        0<input id="xLight" type="range"
-        min="0" max="1" step="0.1" value ="1.0" />1
+        -30<input id="xLight" type="range"
+        min="-30" max="30" step="1" value ="0.0" />30
         </div>
 
         <div>
         Light Y Translation 
-        0<input id="yLight" type="range"
-        min="0" max="1" step="0.1" value ="1.0" />1
+        -30<input id="yLight" type="range"
+        min="-30" max="30" step="1" value ="0.0" />30
         </div>
         
         <div>
         Light Z Translation 
-        0<input id="zLight" type="range"
-        min="0" max="1" step="0.1" value ="1.0" />1
+        -30<input id="zLight" type="range"
+        min="-30" max="30" step="1" value ="0.0" />30
         </div>    
       <div>
         Spotlight: cut off

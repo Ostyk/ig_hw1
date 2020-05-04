@@ -36,19 +36,20 @@ var x_light = -0.2;
 var y_light = -0.6;
 var z_light = 10.2;
 
+
 // light -- main params
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
 var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
-var lightDiffuse = vec4(0.6, 0.6, 0.6, 1.0);
+var lightDiffuse = vec4(0.2, 0.1, 0.6, 1.0);
 
 //light -- directional
-var lightPositionDirectional =  vec4(2.0, 2.0, 2.0, 1.0);
-var lightAmbientDirectional = vec4(0.3, 0.3, 0.3, 1.0);
+var lightPositionDirectional =  vec4(1.0, 2.0, 2.0, 1.0);
+var lightAmbientDirectional = vec4(0.2, 0.8, 0.9, 1.0);
 var lightDiffuseDirectional = vec4(0.6, 0.6, 0.6, 1.0);
 
 //light -- spotlight
-var SpotlightAmbient = vec4(1.0, 1.0, 0.2, 1.0 );
-var SpotlightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var SpotlightAmbient = vec4(0.3, 0.3, 0.3, 1.0 );
+var SpotlightDiffuse = vec4(0.3, 0.3, 0.3, 1.0);
 var SpotlightDirection = vec4(-1.0, 2.0, -10.0, 0.0);
 
 // material desc
@@ -185,6 +186,7 @@ function quad(a, b, c, d) {
     var t2 = subtract(vertices[c], vertices[b]);
     var normal = cross(t1, t2);
     var normal = vec3(normal);
+    normal = normalize(normal);
 
     positionsArray.push(vertices[a]);
     normalsArray.push(normal);
@@ -220,7 +222,7 @@ function quad(a, b, c, d) {
 function colorHourGlass()
 {
  
-    tri(1,0,8);
+    tri(1, 0, 8);
     tri(2, 1, 8);
     tri(3, 2, 8);
     tri(4, 3, 8);
@@ -228,15 +230,6 @@ function colorHourGlass()
     tri(6, 5, 8);
     tri(7, 6, 8);
     tri(0, 7, 8);
-
-    tri(35, 27, 28);
-    tri(35, 28, 29);
-    tri(35, 29, 30);
-    tri(35, 30, 31);
-    tri(35, 31, 32);
-    tri(35, 32, 33);
-    tri(35, 33, 34);
-    tri(35, 34, 27);
     
     quad(0, 1, 10, 9); 
     quad(1, 2, 11, 10); 
@@ -265,7 +258,14 @@ function colorHourGlass()
     quad(24, 25, 34, 33); 
     quad(25, 18, 27, 34); 
 
-
+    tri(35, 27, 28);
+    tri(35, 28, 29);
+    tri(35, 29, 30);
+    tri(35, 30, 31);
+    tri(35, 31, 32);
+    tri(35, 32, 33);
+    tri(35, 33, 34);
+    tri(35, 34, 27);
 }
 
 
