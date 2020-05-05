@@ -16,7 +16,7 @@ out vec2 fTexCoord;
 out vec4 vColor;
 
 // Light
-out vec3 N, L, E;
+out vec3 N, L;
 //out float lightDistance;
 
 // Light -- directional
@@ -84,12 +84,12 @@ void main()
       
       }
     
-    E_Directional = -normalize(pos); // V
+    E_Directional = -normalize(pos);
    
     // light -- Spotlight 
-    L_SpotLight = normalize(normalMatrix*vNormal.xyz); // N
-    E_SpotLight  = normalize(uSpotlightDirection.xyz - pos); // D
-   
+    L_SpotLight = normalize(normalMatrix*vNormal.xyz); 
+    E_SpotLight  = normalize(uSpotlightDirection.xyz - pos); 
+
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
     //gl_Position.z = -gl_Position.z;
 
@@ -122,7 +122,7 @@ uniform float uConstantAttenuation;
 float lightDistance; 
 float attenuation; 
 
-in vec3 N, L, E;
+in vec3 N, L;
 in vec3 L_Directional,E_Directional;
 in vec3 L_SpotLight,E_SpotLight;
 
@@ -152,10 +152,9 @@ main()
   attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
 
   float spotCosine =  max(dot(E_SpotLight , -L), 0.0);
-  float angle_ = acos(spotCosine);
 
   float spotFactor;
-  if (angle_ < radians(spotLightAngle)){
+  if (acos(spotCosine) < radians(spotLightAngle)){
     spotFactor = pow(spotCosine,spotLightCutOff) * attenuation;
   }else{ spotFactor = 0.0;}
 
@@ -207,6 +206,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
 <img id = "texImage" src = "../desert.jpg" hidden></img>
 <div>
     <button id="texture_switch" class="buttonbig button2" >Toggle Texture</button>
+    
       <input type="button" class="buttonbig button2" value="RESET" onclick="resetButton()">
     <button id = "ButtonT" class="buttonbig button2" >Toggle Rotation</button>
   </div>
@@ -284,7 +284,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
     <!-- <div class="split left"> -->
       <div class="first-box shorter">
         <h2> Light manipulation </h2>
-        <div>
+        <!-- <div>
         Light X Translation 
         -30<input id="xLight" type="range"
         min="-30" max="30" step="1" value ="0.0" />30
@@ -300,7 +300,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
         Light Z Translation 
         -30<input id="zLight" type="range"
         min="-30" max="30" step="1" value ="0.0" />30
-        </div>    
+        </div>     -->
       <div>
         Spotlight: cut off
         1<input id="spotLightCutOff" type="range"

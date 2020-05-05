@@ -7,7 +7,7 @@ var numChecks = 8;
 var texSize = 64;
 var program;
 var c;
-var flag = false;
+var flag = true;
 
 // TESTING:
 var nMatrix, nMatrixLoc;
@@ -17,39 +17,30 @@ var colorsArray = [];
 var normalsArray = []
 
 var radius = 5.0;
-var theta = -50.0;
-var phi = 90.0;
+var theta = 55.0;
+var phi = 92.0;
 var scaling = 1
 var near = 2.0;
 var far = 70.0;
 var z = 0.0;
 var x = 0.0;
 var y = 0.0;
-var axis = x;
-var dr = 5.0 * Math.PI/180.0;
-var  fovy = 60.0;  
+var axis = y;
+var  fovy = 30.0;  
 var  aspect = 1.0
-
-var near = 2;
-var far = 10;
-var radius = 6.0;
-var theta = -70.0;
-var phi = 80.0;
-var dr = 5.0 * Math.PI / 180.0;
-
-var fovy = 70.0; // Field-of-view in Y direction angle (in degrees)
-var aspect = 1.0; // Viewport aspect ratio
 
 ///////////////////// material + light
 
 // light settings
-var x_light = -0.2;
-var y_light = -0.6;
-var z_light = 10.2;
+var x_light = 2.7;
+var y_light = 2.6;
+var z_light = 9.2;
 
 
 // light -- main params
 var lightPosition = vec4(1.0, 1.0, 1.0, 1.0); // The
+var lightPosition = vec4(x_light, y_light, z_light, 1.0);
+
 var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
 var lightDiffuse = vec4(0.2, 0.1, 0.6, 1.0);
 
@@ -61,16 +52,17 @@ var lightDiffuseDirectional = vec4(0.6, 0.6, 0.6, 1.0);
 //light -- spotlight
 var SpotlightAmbient = vec4(0.3, 0.3, 0.3, 1.0 );
 var SpotlightDiffuse = vec4(0.3, 0.3, 0.3, 1.0);
-var SpotlightDirection = vec4(-1.0, 2.0, -10.0, 0.0);
+var SpotlightDirection = vec4(-1.0, -1.0, -10.0, 0.0);
 
 // material desc
 var materialAmbient = vec4(0.8, 0.8, 0.8, 1.0);
 var materialDiffuse = vec4(0.8, 0.6, 0.6, 1.0);
 
+
 // Light source -- illumination
 var constantAttenuation =  -0.1 // keep it the same
 var spotLightAngle  = 10
-var spotLightCutOff = 0.0
+var spotLightCutOff = 50.0
 
 
 ///////////////
@@ -163,7 +155,7 @@ function configureTexture(image) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
     gl.generateMipmap(gl.TEXTURE_2D)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
   
     gl.uniform1i(gl.getUniformLocation(program, 'texture_test'), 0)
   }
@@ -430,15 +422,15 @@ nMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
      document.getElementById('scaleSlider').oninput = function (event) {
         scaling = event.target.value
     }
-    document.getElementById('xLight').oninput = function (event) {
-        x_light = event.target.value
-    }
-    document.getElementById('yLight').oninput = function (event) {
-        y_light = event.target.value
-    }
-    document.getElementById('zLight').oninput = function (event) {
-        z_light = event.target.value
-    }
+    // document.getElementById('xLight').oninput = function (event) {
+    //     x_light = event.target.value
+    // }
+    // document.getElementById('yLight').oninput = function (event) {
+    //     y_light = event.target.value
+    // }
+    // document.getElementById('zLight').oninput = function (event) {
+    //     z_light = event.target.value
+    // }
     document.getElementById("spotLightCutOff").oninput =  function(event){
         spotLightCutOff = event.target.value
     }
@@ -522,9 +514,9 @@ function resetButton(){
     document.getElementById('radiusSlider').value = 5
     document.getElementById('thetaSlider').value = 45
     document.getElementById('phiSlider').value = 360
-    document.getElementById('xLight').value = 1.0
-    document.getElementById('yLight').value = 1.0
-    document.getElementById('zLight').value = 1.0
+    // document.getElementById('xLight').value = 1.0
+    // document.getElementById('yLight').value = 1.0
+    // document.getElementById('zLight').value = 1.0
     document.getElementById("spotLightCutOff").value = 1.0;
     document.getElementById("spotLightAngle").value = 10
     document.getElementById("texture_switch").value = 1.0
@@ -542,9 +534,9 @@ function resetButton(){
     theta = 45
     phi = 360
     speed = 0.01
-    x_light = 0.5;
-    y_light = 0.5;
-    z_light = 0.5;
+    // x_light = 0.5;
+    // y_light = 0.5;
+    // z_light = 0.5;
     spotLightCutOff = 0.0;
     spotLightAngle = 10;
         

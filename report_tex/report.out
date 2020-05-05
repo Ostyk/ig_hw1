@@ -3,8 +3,6 @@
 \BOOKMARK [2][-]{subsection.2.1}{Creating an irregular object}{section.2}% 3
 \BOOKMARK [2][-]{subsection.2.2}{ModelView and Projection matrices}{section.2}% 4
 \BOOKMARK [2][-]{subsection.2.3}{Lighting: Directional and spotlight and Material}{section.2}% 5
-\BOOKMARK [2][-]{subsection.2.4}{Per-fragment shading model}{section.2}% 6
-\BOOKMARK [2][-]{subsection.2.5}{Texture from file}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{Conclusions}{}% 8
-\BOOKMARK [2][-]{subsection.3.1}{Advantages}{section.3}% 9
-\BOOKMARK [2][-]{subsection.3.2}{Disadvantages}{section.3}% 10
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Calculating the spotlight}{subsection.2.3}% 6
+\BOOKMARK [2][-]{subsection.2.4}{Per-fragment shading model}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.5}{Texture from file}{section.2}% 8
