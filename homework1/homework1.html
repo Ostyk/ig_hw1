@@ -204,7 +204,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
 <div>
     <button id="texture_switch" class="buttonbig button2" >Toggle Texture</button>
     
-      <input type="button" class="buttonbig button2" value="RESET" onclick="resetButton()">
+      <!-- <input type="button" class="buttonbig button2" value="RESET" onclick="resetButton()"> -->
     <button id = "ButtonT" class="buttonbig button2" >Toggle Rotation</button>
   </div>
 
@@ -280,32 +280,15 @@ Oops ... your browser doesn't support the HTML5 canvas element
     <!-- <div class="split left"> -->
       <div class="first-box shorter">
         <h2> Light manipulation </h2>
-        <!-- <div>
-        Light X Translation 
-        -30<input id="xLight" type="range"
-        min="-30" max="30" step="1" value ="0.0" />30
-        </div>
-
-        <div>
-        Light Y Translation 
-        -30<input id="yLight" type="range"
-        min="-30" max="30" step="1" value ="0.0" />30
-        </div>
-        
-        <div>
-        Light Z Translation 
-        -30<input id="zLight" type="range"
-        min="-30" max="30" step="1" value ="0.0" />30
-        </div>     -->
       <div>
         Spotlight: cut off
         1<input id="spotLightCutOff" type="range"
-        min="0" max="80" step="10" value ="10.0" />80
+        min="1" max="80" step="10" value ="50.0" />80
       </div>
       <div>
         Spotlight: angle
         0<input id="spotAngle" type="range"
-        min="10" max="100" step="0.1" value ="10.0" />100
+        min="0" max="80" step="0.1" value ="7.0" />80
       </div>
 
 
@@ -407,7 +390,7 @@ cursor: pointer;
 background-color: #4CAF50; /* Green */
 border: none;
 color: white;
-padding: 20px 25px;
+padding: 30px 55px;
 text-align: center;
 text-decoration: none;
 display: inline-block;

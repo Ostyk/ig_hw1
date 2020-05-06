@@ -17,14 +17,14 @@ var nMatrix, nMatrixLoc;
 
 var radius = 5.0;
 var theta = 55.0;
-var phi = 92.0;
+var phi = 102.0;
 var scaling = 1
 var near = 2.0;
 var far = 70.0;
 var z = 0.0;
 var x = 0.0;
 var y = 0.0;
-var axis = y;
+var axis = x;
 var  fovy = 40.0;  
 var  aspect = 1.0
 
@@ -58,8 +58,8 @@ var materialDiffuse = vec4(0.8, 0.6, 0.6, 1.0);
 
 // Light source -- illumination
 var constantAttenuation =  -0.1 // keep it the same
-var spotLightAngle  = 10
-var spotLightCutOff = 20.0
+var spotLightAngle  = 7.0;
+var spotLightCutOff = 50.0;
 
 
 ///////////////
@@ -486,39 +486,39 @@ var render = function(){
 }
 
 
-function resetButton(){
+// function resetButton(){
 
-    document.getElementById("uFarSlider").value=10
-    document.getElementById("uFarSlider").value=2
-    document.getElementById("xSlider").value=0
-    document.getElementById("ySlider").value=0
-    document.getElementById("zSlider").value=0
-    document.getElementById("ufovSlider").value=40
-    document.getElementById("uaspectSlider").value=1
-    document.getElementById('uscaleSlider').value = 1
-    document.getElementById('uradiusSlider').value = 5
-    document.getElementById('uthetaSlider').value = 45
-    document.getElementById('uphiSlider').value = 360
-    document.getElementById("spotLightCutOff").value = 1.0;
-    document.getElementById("spotLightAngle").value = 10
-    document.getElementById("texture_switch").value = 1.0
+//     document.getElementById("uFarSlider").value=10
+//     document.getElementById("uFarSlider").value=2
+//     document.getElementById("xSlider").value=0
+//     document.getElementById("ySlider").value=0
+//     document.getElementById("zSlider").value=0
+//     document.getElementById("ufovSlider").value=40
+//     document.getElementById("uaspectSlider").value=1
+//     document.getElementById('uscaleSlider').value = 1
+//     document.getElementById('uradiusSlider').value = 5
+//     document.getElementById('uthetaSlider').value = 45
+//     document.getElementById('uphiSlider').value = 360
+//     document.getElementById("spotLightCutOff").value = 1.0;
+//     document.getElementById("spotLightAngle").value = 10
+//     document.getElementById("texture_switch").value = 1.0
 
-    far = 1.0
-    near = 45.0
-    x = 0.0
-    y = 0.0
-    z = 0.0
-    ascpect = 2
-    fovy = 45.0
-    scaling = 1
-    radius = 5
-    theta = 45
-    phi = 360
-    speed = 0.01
-    spotLightCutOff = 0.0;
-    spotLightAngle = 10;
+//     far = 1.0
+//     near = 45.0
+//     x = 0.0
+//     y = 0.0
+//     z = 0.0
+//     ascpect = 2
+//     fovy = 45.0
+//     scaling = 1
+//     radius = 5
+//     theta = 45
+//     phi = 360
+//     speed = 0.01
+//     spotLightCutOff = 0.0;
+//     spotLightAngle = 10;
         
-}
+// }
 
 
 
