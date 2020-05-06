@@ -9,12 +9,11 @@ var program;
 var c;
 var flag = true;
 
-// TESTING:
-var nMatrix, nMatrixLoc;
-
 var positionsArray = [];
 var colorsArray = [];
+
 var normalsArray = []
+var nMatrix, nMatrixLoc;
 
 var radius = 5.0;
 var theta = 55.0;
@@ -38,9 +37,7 @@ var z_light = 9.2;
 
 
 // light -- main params
-var lightPosition = vec4(1.0, 1.0, 1.0, 1.0); // The
 var lightPosition = vec4(x_light, y_light, z_light, 1.0);
-
 var lightAmbient = vec4(0.4, 0.4, 0.4, 1.0 );
 var lightDiffuse = vec4(0.2, 0.1, 0.6, 1.0);
 
@@ -76,6 +73,7 @@ const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
 var speed = 0.5;
+
 // texture part
 var texCoordsArray = [];
 var texCoord = [
@@ -155,8 +153,6 @@ function configureTexture(image) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
     gl.generateMipmap(gl.TEXTURE_2D)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR)
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-  
     gl.uniform1i(gl.getUniformLocation(program, 'texture_test'), 0)
   }
 
@@ -389,10 +385,10 @@ nMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
     //////////////////////////////////////////
     /// Sliders
     ////////////////////////////////////////// 
-    document.getElementById("zFarSlider").oninput = function(event) {
+    document.getElementById("uFarSlider").oninput = function(event) {
         far = event.target.value;
     };
-    document.getElementById("zNearSlider").oninput = function(event) {
+    document.getElementById("uFarSlider").oninput = function(event) {
         near = event.target.value;
     };
     document.getElementById("xSlider").oninput = function(event) {
@@ -404,39 +400,30 @@ nMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
     document.getElementById("zSlider").oninput = function(event) {
         z = event.target.value;
     };
-    document.getElementById("aspectSlider").oninput = function(event) {
+    document.getElementById("uaspectSlider").oninput = function(event) {
         aspect = event.target.value;
     };
-    document.getElementById("fovSlider").oninput = function(event) {
+    document.getElementById("ufovSlider").oninput = function(event) {
         fovy = event.target.value;
     };
-    document.getElementById("radiusSlider").onchange = function(event) {
+    document.getElementById("uradiusSlider").onchange = function(event) {
         radius = event.target.value;
      };
-     document.getElementById("thetaSlider").onchange = function(event) {
+     document.getElementById("uthetaSlider").onchange = function(event) {
          theta = event.target.value* Math.PI/180.0;
      };
-     document.getElementById("phiSlider").onchange = function(event) {
+     document.getElementById("uphiSlider").onchange = function(event) {
          phi = event.target.value* Math.PI/180.0;
      };
-     document.getElementById('scaleSlider').oninput = function (event) {
+     document.getElementById('uscaleSlider').oninput = function (event) {
         scaling = event.target.value
-    }
-    // document.getElementById('xLight').oninput = function (event) {
-    //     x_light = event.target.value
-    // }
-    // document.getElementById('yLight').oninput = function (event) {
-    //     y_light = event.target.value
-    // }
-    // document.getElementById('zLight').oninput = function (event) {
-    //     z_light = event.target.value
-    // }
+     };
     document.getElementById("spotLightCutOff").oninput =  function(event){
         spotLightCutOff = event.target.value
-    }
+    };
     document.getElementById("spotAngle").oninput =  function(event){
         spotLightAngle = event.target.value
-    }
+    };
     document.getElementById("ButtonX").onclick = function(){
         axis = 0};
     document.getElementById("ButtonY").onclick = function(){
@@ -499,28 +486,22 @@ var render = function(){
 }
 
 
-
-
 function resetButton(){
 
-    document.getElementById("zFarSlider").value=10
-    document.getElementById("zNearSlider").value=2
+    document.getElementById("uFarSlider").value=10
+    document.getElementById("uFarSlider").value=2
     document.getElementById("xSlider").value=0
     document.getElementById("ySlider").value=0
     document.getElementById("zSlider").value=0
-    document.getElementById("fovSlider").value=40
-    document.getElementById("aspectSlider").value=1
-    document.getElementById('scaleSlider').value = 1
-    document.getElementById('radiusSlider').value = 5
-    document.getElementById('thetaSlider').value = 45
-    document.getElementById('phiSlider').value = 360
-    // document.getElementById('xLight').value = 1.0
-    // document.getElementById('yLight').value = 1.0
-    // document.getElementById('zLight').value = 1.0
+    document.getElementById("ufovSlider").value=40
+    document.getElementById("uaspectSlider").value=1
+    document.getElementById('uscaleSlider').value = 1
+    document.getElementById('uradiusSlider').value = 5
+    document.getElementById('uthetaSlider').value = 45
+    document.getElementById('uphiSlider').value = 360
     document.getElementById("spotLightCutOff").value = 1.0;
     document.getElementById("spotLightAngle").value = 10
     document.getElementById("texture_switch").value = 1.0
-    // document.getElementById('speed').value = 0.01
 
     far = 1.0
     near = 45.0
@@ -534,9 +515,6 @@ function resetButton(){
     theta = 45
     phi = 360
     speed = 0.01
-    // x_light = 0.5;
-    // y_light = 0.5;
-    // z_light = 0.5;
     spotLightCutOff = 0.0;
     spotLightAngle = 10;
         

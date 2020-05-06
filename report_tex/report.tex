@@ -222,7 +222,7 @@ var spotLightAngle, spotLightCutOff; // spotlight parameters
 \subsection{Per-fragment shading model}
 The per-fragment shading model used is called the Cartoon Shade Algorithm \cite{shade}
 First, we had to calculate the illuminated diffuse color as in Equation \ref{eq1}, which is the vertex color. Next, the shadowed diffuse color in Equation \ref{eq2}. Finally once, we computed the value of the product of the unit vector from the light source to the vertex $\overrightarrow{L}$ and the unit vector
-normal to the surface at the vertex  $\overrightarrow{n}$, we assign to the fragment the value based on the check in Equation 3. Note that the result of this product is the cosine of the angle between the two vectors. The resulting value would be either multiplied by the texture (described in the following section) or left as is a sum of $C_i$ and  $C_s$.
+normal to the surface at the vertex  $\overrightarrow{n}$, we assign to the fragment the value based on the check in Equation 3. Note that the result of this product is the cosine of the angle between the two vectors. The resulting value would be either multiplied by the texture (described in the following section) or left as is a sum of $C_i$ and  $C_s$. Note that in the spotlight shading these would also be multiplied by the spot factor.
 \begin{equation}\label{eq1}
 C_i = a_g \times a_m + a_l \times a_m + d_l \times d_m  
 \end{equation}
