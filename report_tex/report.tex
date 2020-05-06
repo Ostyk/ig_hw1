@@ -172,7 +172,7 @@ def getshapevalues(height_value, vertices=8, width=1):
         x = cos(2*value*pi/vertices) * width
         y = sin(2*value*pi/vertices) * width
         coords.append([x, y])
-       return coords
+    return coords
 \end{lstlisting}
 The  code snippet in Listing \ref{lst:python} in Python is just a visual version of obtaining a polygon coordinates. These in reality would be checked for value and using strings formatted into JavaScript ready code. The result is show in Listing \ref{lst:bottomoctagon} below. 
 
@@ -188,15 +188,15 @@ vec4(0.3*Math.sqrt(2), -0.3*Math.sqrt(2), -1.0, 1.0), // point 7
 vec4(0, 0, -1.0, 1.0), // point (centroid) 8
 \end{lstlisting}
 
-Hence, using this procedure, from the four octagon faces, and inner points of the bottom and top face, a total of 34 vertices  (inner octagon centroids were not needed). The points were connected using.
+Hence, using this procedure, from the four octagon faces, and inner points of the bottom and top face, a total of 34 vertices  (inner octagon centroids were not needed) were created. 
 
 \subsection{ModelView and Projection matrices}
 
-Next, I added a viewer position, a projection and computed the ModelView and Projection matrices using a Javascript application. The ModelView was computed using the \texttt{lookAt} function which can concatenate with modeling transformations. Subsequently, sliders were added to the HTML file, which include the following transformations: radius, theta, phi, Near, Far, Scale, FOV (field of view), aspect. Additionaly for animation and asthetic reasons enabled buttons which through automatic increments of theta, and appropriate rotation matrices (\texttt{rz, ry, rx}) allow the rotation of the hourglass around the roll pitch yaw angles. Moreover, the shape can be translated along each of the X, Y, and Z world axes.
+Next, I added a viewer position, a projection and computed the ModelView and Projection matrices using a Javascript application. The ModelView was computed using the \texttt{lookAt} function which can concatenate with modeling transformations. Subsequently, sliders were added to the HTML file, which include the following transformations: radius, theta, phi, Near, Far, Scale, FOV (field of view), aspect. Additionally for animation and aesthetic reasons enabled buttons which through automatic increments of theta, and appropriate rotation matrices (\texttt{rz, ry, rx}) allow the rotation of the hourglass around the roll pitch yaw angles. Moreover, the shape can be translated along each of the X, Y, and Z world axes.
 
 \subsection{Lighting: Directional and spotlight and Material}
 The material and light are very much interconnected hence they will be described in one section together.
-Both directional light and spotlight were required to be implemented with necessary elements depicted in Listing \ref{lst:lighting}. The directional light and spotlight were calculated appropriately  with these parameters as passing from each \texttt{gl.uniform4fv}  to the vertex shader. These were hence sent to the fragment shader via \texttt{N, L, L\_Directional, E\_Directional, L\_SpotLight, E\_SpotLight} parameters. There the material was blended with the shader model described in the next subsection, and multiplied by the spotlight outcome \texttt{spotfactor} which itself was based on the distance to the light source, and constant attenuation.
+Both directional light and spotlight were required to be implemented with necessary elements depicted in Listing \ref{lst:lighting}. The directional light and spotlight were calculated appropriately  with these parameters as passing from each \texttt{gl.uniform4fv}  to the vertex shader. These were hence sent to the fragment shader via appropriate light parameters. There the material was blended with the shader model described in the next subsection, and multiplied by the spotlight outcome \texttt{spotfactor} which itself was based on the distance to the light source, and constant attenuation.
 
 \begin{lstlisting}[caption={Light and Material parameters},label={lst:lighting},language=JavaScript]
 var lightPosition, lightAmbient, lightDiffuse; // main light
@@ -207,22 +207,20 @@ var constantAttenuation; // a single non changing  attenuation
 var spotLightAngle, spotLightCutOff; // spotlight parameters
 \end{lstlisting}
 \subsubsection{Calculating the spotlight}
- The spot direction is specified as a vector which simplifies calculations. The size of the cone is specified by a cutoff angle, and the light is only emitted from the light position in directions whose angle with the spot direction is less than the cutoff angle. 
- 
- Here, I used  the cosine of the cutoff angle instead of the angle itself, then as in Listing \ref{lst:spotfactor} compare the cutoff value (predefined) using the dot product (as in the the slides of the course \texttt{Angel\_UNM\_14\_8.pdf} ) of the \texttt{E\_SpotLight} and -L (since +L is coming from the object itself that represents the cosine of the angle between the light ray and the spot direction. Then we compute the spotFactor which is multiplied by basic light color to give the effective light intensity of the spotlight at a point on a surface.
+The \texttt{SpotlightDirection} in the  Listing \ref{lst:lighting} is specified as a predefined vector, whereas the size of the cone is specified by the \texttt{spotLightAngle}. In theory, light is emitted in directions whose angle with the \texttt{SpotlightDirection} is less than the \texttt{spotLightCutOff} angle.  However, as suggested in the slides of the course (\texttt{Angel\_UNM\_14\_8.pdf}),
+I used the cosine of the  \texttt{spotLightCutOff}  instead of the angle itself and then compare it to the \texttt{spotCosine}. The \texttt{spotCosine} is the dot product which represents the cosine of the angle between the light ray and the \texttt{SpotlightDirection}. Then finally the \texttt{spotFactor} is either zero or a resulting factor which gives the effective light intensity of the spotlight at a point on a surface.
  
  \begin{lstlisting}[caption={Spotfactor assignment},label={lst:spotfactor},language=JavaScript]
   float spotCosine =  max(dot(E_SpotLight , -L), 0.0);
-  float spotFactor;
-  if (acos(spotCosine) < radians(spotLightAngle)){
-    spotFactor = pow(spotCosine, spotLightCutOff) * attenuation;
-  }else{ spotFactor = 0.0;}
+  if (acos(spotCosine) > radians(spotLightAngle)){
+    spotFactor = 0.0;}
+  else{ spotFactor = pow(spotCosine,spotLightCutOff) * attenuation; }
 \end{lstlisting}
 
 \subsection{Per-fragment shading model}
 The per-fragment shading model used is called the Cartoon Shade Algorithm \cite{shade}
 First, we had to calculate the illuminated diffuse color as in Equation \ref{eq1}, which is the vertex color. Next, the shadowed diffuse color in Equation \ref{eq2}. Finally once, we computed the value of the product of the unit vector from the light source to the vertex $\overrightarrow{L}$ and the unit vector
-normal to the surface at the vertex  $\overrightarrow{n}$, we assign to the fragment the value based on the check in Equation 3. Note that the result of this product is the cosine of the angle between the two vectors. The resulting value would be either multiplied by the texture (described in the following section) or left as is a sum of $C_i$ and  $C_s$. Note that in the spotlight shading these would also be multiplied by the spot factor.
+normal to the surface at the vertex  $\overrightarrow{n}$ (\texttt{N\_normal}), we assign to the fragment the value based on the check in Equation 3. Note that the result of this product is the cosine of the angle between the two vectors. The resulting value would be either multiplied by the texture (described in the following section) or left as is a sum of $C_i$ and  $C_s$. Note that in the spotlight shading these would also be multiplied by the spot factor. 
 \begin{equation}\label{eq1}
 C_i = a_g \times a_m + a_l \times a_m + d_l \times d_m  
 \end{equation}
@@ -237,7 +235,7 @@ C_s =  a_g \times a_m + a_l \times a_m
 \end{equation}
 
 \subsection{Texture from file}
-The texture is simulated via a PNG loaded from file resource which depicts the the surface of sand beach. The coordinates were pushed from predefined coordinates in both the  (\texttt{tri function{}}) and quadrilaterals (\texttt{quad function{}}) functions. Next, thanks to the \texttt{configureTexture} function there were mapped and sent to the fragment shader. The texture can be toggled on and off as requested. The mapping I used was \texttt{gl.NEAREST\_MIPMAP\_LINEAR} which means no filtering on the texture image but linear filtering between the two nearest MIP levels. This resulted in a sand like vertical texture.
+The texture is simulated via a PNG loaded from file resource which depicts the the surface of sand beach. The coordinates were pushed from predefined coordinates in both the  (\texttt{tri function{}}) and quadrilaterals (\texttt{quad function{}}) functions and chosen according to quad faces. Next, thanks to the \texttt{configureTexture} function there were mapped and sent to the fragment shader. The texture can be toggled on and off as requested. The mapping I used was \texttt{gl.NEAREST\_MIPMAP\_LINEAR} which means no filtering on the texture image but linear filtering between the two nearest MIP levels. This resulted in a sand like vertical texture. Finally the resulting \texttt{fColor} would be the sum of $C_i$ and  $C_s$ multiplied by the texture.
 %\section{Conclusions}
 %\subsection{Advantages}
 %Please note that all CSS styling was taken from \cite{css}

@@ -16,15 +16,13 @@ out vec2 fTexCoord;
 out vec4 vColor;
 
 // Light
-out vec3 N, L;
-//out float lightDistance;
+out vec3 N_normal, L;
 
 // Light -- directional
-out vec3 L_Directional,E_Directional;
-
+out vec3 L_Directional;
 
 //Light -- spotlight
-out vec3 L_SpotLight, E_SpotLight;
+out vec3 E_SpotLight;
 
 uniform mat3 normalMatrix;
 
@@ -74,20 +72,18 @@ void main()
         {L = normalize(uLightPosition.xyz);}
      else {L = normalize(uLightPosition.xyz - pos);}
       
-   
+     N_normal = normalize(normalMatrix*vNormal.xyz); 
+
     // light -- directional 
       if (uLightPositionDirectional.w == 0.0){
         L_Directional = normalize(uLightPositionDirectional.xyz);
       }
       else{
         L_Directional = normalize(uLightPositionDirectional.xyz - pos);
-      
       }
-    
-    E_Directional = -normalize(pos);
+  
    
     // light -- Spotlight 
-    L_SpotLight = normalize(normalMatrix*vNormal.xyz); 
     E_SpotLight  = normalize(uSpotlightDirection.xyz - pos); 
 
     gl_Position = uProjectionMatrix*uModelViewMatrix*(rz * ry * rx * aPosition);
@@ -122,9 +118,9 @@ uniform float uConstantAttenuation;
 float lightDistance; 
 float attenuation; 
 
-in vec3 N, L;
-in vec3 L_Directional,E_Directional;
-in vec3 L_SpotLight,E_SpotLight;
+in vec3 N_normal, L;
+in vec3 L_Directional;
+in vec3 E_SpotLight;
 
 // light 
 uniform vec4 uAmbientProduct, uDiffuseProduct;
@@ -151,24 +147,25 @@ main()
   lightDistance = sqrt(pow(L.x,2.0) + pow(L.y,2.0) + pow(L.z,2.0));
   attenuation = 1.0/(uConstantAttenuation*lightDistance+ 1.0);
 
-  float spotCosine =  max(dot(E_SpotLight , -L), 0.0);
-
   float spotFactor;
-  if (acos(spotCosine) < radians(spotLightAngle)){
+  float spotCosine =  max(dot(E_SpotLight , -L), 0.0); // max to deal with -ve values
+  if (acos(spotCosine) > radians(spotLightAngle)){
+    spotFactor = 0.0;
+  }else{
     spotFactor = pow(spotCosine,spotLightCutOff) * attenuation;
-  }else{ spotFactor = 0.0;}
+  }
 
    ci = cs = ag + uAmbientProduct ;
 
   // spotlight shade
-   if (max(dot(L,N),0.0)>=0.5){
+   if (max(dot(L,N_normal),0.0)>=0.5){
        ci = (ci + uDiffuseProduct)*spotFactor;
    }else{
        ci = ci*spotFactor;
    }
 
    // directional shade
-   if (max(dot(L_Directional,N),0.0)>=0.5){
+   if (max(dot(L_Directional,N_normal),0.0)>=0.5){
        cs = cs + uDiffuseProductDirectional;
    }else{
        cs  = cs;

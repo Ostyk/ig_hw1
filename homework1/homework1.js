@@ -59,7 +59,7 @@ var materialDiffuse = vec4(0.8, 0.6, 0.6, 1.0);
 // Light source -- illumination
 var constantAttenuation =  -0.1 // keep it the same
 var spotLightAngle  = 10
-var spotLightCutOff = 50.0
+var spotLightCutOff = 20.0
 
 
 ///////////////
