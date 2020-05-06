@@ -7,7 +7,7 @@ var numChecks = 8;
 var texSize = 64;
 var program;
 var c;
-var flag = true;
+var flag = false;
 
 var positionsArray = [];
 var colorsArray = [];
@@ -25,7 +25,7 @@ var z = 0.0;
 var x = 0.0;
 var y = 0.0;
 var axis = y;
-var  fovy = 30.0;  
+var  fovy = 40.0;  
 var  aspect = 1.0
 
 ///////////////////// material + light
